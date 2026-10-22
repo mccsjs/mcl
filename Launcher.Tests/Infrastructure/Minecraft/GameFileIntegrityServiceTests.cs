@@ -10,6 +10,7 @@ using System.IO.Compression;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using Launcher.Application.Services;
 using Launcher.Domain.Models;
@@ -20,6 +21,59 @@ namespace Launcher.Tests.Infrastructure.Minecraft;
 
 public sealed class GameFileIntegrityServiceTests : TestTempDirectory
 {
+    [Fact]
+    public async Task ManifestValidationPreservesFailureOrderAcrossChecks()
+    {
+        Directory.CreateDirectory(TempRoot);
+        var firstPath = Path.Combine(TempRoot, "first.jar");
+        var metadataPath = Path.Combine(TempRoot, "metadata.jar");
+        var missingPath = Path.Combine(TempRoot, "missing.jar");
+        var fileBytes = new byte[512 * 1024];
+        await File.WriteAllBytesAsync(firstPath, fileBytes);
+
+        var manifest = new RequiredGameFileManifest(
+        [
+            new RequiredGameFile(
+                firstPath,
+                "Library",
+                null,
+                new string('0', 40),
+                fileBytes.LongLength,
+                Required: true,
+                "Download",
+                "Checksum mismatch"),
+            new RequiredGameFile(
+                metadataPath,
+                "Library",
+                null,
+                null,
+                null,
+                Required: true,
+                "Unavailable",
+                "Metadata is incomplete",
+                GameFileRepairFailureReason.MetadataIncomplete),
+            new RequiredGameFile(
+                missingPath,
+                "Library",
+                null,
+                new string('1', 40),
+                1,
+                Required: true,
+                "Download",
+                "File is missing")
+        ]);
+
+        var report = await GameFileManifestValidator.ValidateAsync(manifest, CancellationToken.None);
+
+        Assert.Equal(1, report.MissingCount);
+        Assert.Equal(1, report.CorruptedCount);
+        Assert.Equal(1, report.UnverifiableCount);
+        Assert.Equal(2, report.RepairableCount);
+        Assert.Equal(
+            new[] { firstPath, metadataPath, missingPath },
+            report.Failures.Select(failure => failure.TargetPath));
+    }
+
     [Fact]
     public async Task ManifestResolutionUsesMissingOfficialParentInMemoryWithoutWritingIt()
     {
@@ -90,7 +144,9 @@ public sealed class GameFileIntegrityServiceTests : TestTempDirectory
             plan.Manifest.Files,
             file => file.Category == "VersionMetadata"
                 && file.TargetPath.Contains(parentVersion, StringComparison.OrdinalIgnoreCase));
-        Assert.Equal(2, handler.RequestCount);
+        // PCL mirrors are tried before official Mojang metadata; each missing mirror
+        // response falls back to the official address and the resolved parent is cached.
+        Assert.Equal(4, handler.RequestCount);
     }
 
     [Fact]
@@ -115,6 +171,7 @@ public sealed class GameFileIntegrityServiceTests : TestTempDirectory
         Assert.True(result.LaunchAllowed);
         Assert.Equal(1, result.RepairedCount);
         Assert.Equal(libraryContent, await File.ReadAllTextAsync(Path.Combine(minecraftDirectory, "libraries", relativePath.Replace('/', Path.DirectorySeparatorChar))));
+        Assert.Contains(progressReports, report => report.Stage == LaunchProgressStages.RepairingLibraries);
         Assert.Contains(
             progressReports,
             report => report.Stage == LaunchProgressStages.RevalidatingFiles && report.Percent == 84);
@@ -124,6 +181,67 @@ public sealed class GameFileIntegrityServiceTests : TestTempDirectory
         Assert.Equal(
             progressReports.Where(report => report.Percent is not null).Select(report => report.Percent!.Value).Order(),
             progressReports.Where(report => report.Percent is not null).Select(report => report.Percent!.Value));
+    }
+
+    [Fact]
+    public async Task MissingForgeRuntimeLibraryDownloadsDirectlyWithoutReplayingInstaller()
+    {
+        const string versionName = "1.16.5";
+        const string relativePath = "com/example/runtime/1.0/runtime-1.0.jar";
+        const string libraryContent = "runtime";
+        const string libraryUrl = "https://example.test/" + relativePath;
+        var minecraftDirectory = Path.Combine(TempRoot, ".minecraft");
+        var versionDirectory = Path.Combine(minecraftDirectory, "versions", versionName);
+        CreateVersion(minecraftDirectory, versionName, relativePath, libraryContent, createLibrary: false);
+
+        var libraryBytes = Encoding.UTF8.GetBytes(libraryContent);
+        var identity = new GameFileLoaderIdentity(LoaderKind.Forge, versionName, "36.2.42");
+        var manifest = new LoaderArtifactManifest(
+            LoaderArtifactManifestStore.CurrentSchemaVersion,
+            LoaderKind.Forge,
+            versionName,
+            identity.LoaderVersion,
+            new string('a', 64),
+            [new LoaderArtifactManifestEntry(
+                $"libraries/{relativePath}",
+                LoaderArtifactKind.RuntimeLibrary,
+                libraryUrl,
+                Sha1(libraryBytes),
+                Sha256(libraryBytes),
+                libraryBytes.LongLength,
+                GameFileVerificationLevel.TrustedAcquisitionHash)]);
+        var manifestPath = LoaderArtifactManifestStore.GetPath(versionDirectory);
+        Directory.CreateDirectory(Path.GetDirectoryName(manifestPath)!);
+        await File.WriteAllTextAsync(
+            manifestPath,
+            JsonSerializer.Serialize(
+                manifest,
+                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
+
+        var provider = new FailingLoaderProvider(LoaderKind.Forge, new InvalidOperationException("Installer should not run."));
+        var service = new GameFileIntegrityService(
+            new HttpClient(new ContentHandler(new Dictionary<string, string> { [libraryUrl] = libraryContent })),
+            downloadSpeedLimitState: null,
+            logger: null,
+            loaderProviders: [provider],
+            gameInstallCoordinator: new GameInstallCoordinator());
+        var progressReports = new List<LauncherProgress>();
+
+        var result = await service.ValidateAndRepairAsync(
+            new GameFileIntegrityRequest(minecraftDirectory, versionName, versionDirectory)
+            {
+                LoaderIdentity = identity
+            },
+            new GameFileRepairOptions(AllowRepair: true),
+            new InlineProgress(progressReports));
+
+        Assert.True(result.LaunchAllowed);
+        Assert.Equal(0, provider.InstallCallCount);
+        Assert.Equal(libraryContent, await File.ReadAllTextAsync(Path.Combine(
+            minecraftDirectory,
+            "libraries",
+            relativePath.Replace('/', Path.DirectorySeparatorChar))));
+        Assert.Contains(progressReports, report => report.Stage == LaunchProgressStages.RepairingLibraries);
     }
 
     [Fact]
@@ -266,6 +384,20 @@ public sealed class GameFileIntegrityServiceTests : TestTempDirectory
         Assert.False(result.LaunchAllowed);
         var failure = Assert.Single(result.Failures, item => item.Category == "LoaderProcessorOutput");
         Assert.Equal(expectedReason, failure.Reason);
+    }
+
+    [Fact]
+    public async Task MissingInstallerPrerequisiteIsNotRequiredToLaunchGame()
+    {
+        var result = await ValidateLoaderArtifactAsync(
+            LoaderKind.Forge,
+            LoaderArtifactKind.InstallerPrerequisite,
+            GameFileVerificationLevel.TrustedAcquisitionHash,
+            expectedContent: "old!",
+            actualContent: null);
+
+        Assert.True(result.LaunchAllowed);
+        Assert.DoesNotContain(result.Failures, failure => failure.Category == "LoaderPrerequisite");
     }
 
     [Theory]

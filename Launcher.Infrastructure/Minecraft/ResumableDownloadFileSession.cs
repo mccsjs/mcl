@@ -150,8 +150,8 @@ internal sealed class ResumableDownloadFileSession : IAsyncDisposable
                 managedRoot,
                 options.UseHiddenTemporaryFile);
             var temporaryFileName = options.UseHiddenTemporaryFile
-                ? $".{Path.GetFileName(normalizedDestination)}.bhl-pending-{Guid.NewGuid():N}.tmp"
-                : $"{Path.GetFileName(normalizedDestination)}.bhl-pending-{Guid.NewGuid():N}.tmp";
+                ? $".{Path.GetFileName(normalizedDestination)}.mcl-pending-{Guid.NewGuid():N}.tmp"
+                : $"{Path.GetFileName(normalizedDestination)}.mcl-pending-{Guid.NewGuid():N}.tmp";
             var temporaryPath = Path.Combine(destinationDirectory, temporaryFileName);
             if (options.PersistenceMode is DownloadPersistenceMode.TaskScopedResumable)
                 capacityLease = PartFileCapacityManager.Reserve(integrity.ExpectedSize);
@@ -696,21 +696,24 @@ internal sealed class ResumableDownloadFileSession : IAsyncDisposable
     {
         if (managedRoot is not null)
             MinecraftPathGuard.EnsureNoReparsePoints(managedRoot, directory, "Managed download cleanup directory");
-        var pattern = useHiddenTemporaryFile
-            ? $".{destinationFileName}.bhl-pending-*.tmp"
-            : $"{destinationFileName}.bhl-pending-*.tmp";
-        foreach (var candidate in Directory.EnumerateFiles(directory, pattern, SearchOption.TopDirectoryOnly))
+        foreach (var prefix in new[] { "mcl", "bhl" })
         {
-            try
+            var pattern = useHiddenTemporaryFile
+                ? $".{destinationFileName}.{prefix}-pending-*.tmp"
+                : $"{destinationFileName}.{prefix}-pending-*.tmp";
+            foreach (var candidate in Directory.EnumerateFiles(directory, pattern, SearchOption.TopDirectoryOnly))
             {
-                if (managedRoot is not null)
-                    MinecraftPathGuard.EnsureNoReparsePoints(managedRoot, candidate, "Managed download cleanup file");
-                using var lease = new FileStream(candidate, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-                lease.Close();
-                File.Delete(candidate);
+                try
+                {
+                    if (managedRoot is not null)
+                        MinecraftPathGuard.EnsureNoReparsePoints(managedRoot, candidate, "Managed download cleanup file");
+                    using var lease = new FileStream(candidate, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+                    lease.Close();
+                    File.Delete(candidate);
+                }
+                catch (IOException) { }
+                catch (UnauthorizedAccessException) { }
             }
-            catch (IOException) { }
-            catch (UnauthorizedAccessException) { }
         }
     }
 

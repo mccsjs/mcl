@@ -42,7 +42,7 @@ internal static class MinecraftDownloadSourceResolver
         DownloadSourcePreference preference,
         string? categoryHint = null)
     {
-        var useMirrorFirst = PrefersMirror(originalUrl, preference);
+        var useMirrorFirst = PrefersMirror(preference);
         var primary = ResolveRequest(originalUrl, preference, useBmclApi: useMirrorFirst, categoryHint);
         yield return primary;
 
@@ -57,61 +57,17 @@ internal static class MinecraftDownloadSourceResolver
         yield return fallback;
     }
 
-    // 自动模式：二进制走镜像求速度，元数据走官方求最新；加载器版本列表是例外，镜像为实时代理。
-    private static bool PrefersMirror(string originalUrl, DownloadSourcePreference preference)
+    // PCL 默认对已知下载源优先尝试镜像，并在失败后回退到原始源。
+    private static bool PrefersMirror(DownloadSourcePreference preference)
     {
         return preference switch
         {
             DownloadSourcePreference.BmclApi => true,
             DownloadSourcePreference.Official => false,
             DownloadSourcePreference.OfficialOnly => false,
-            DownloadSourcePreference.Auto => IsBinaryResourceUrl(originalUrl) || IsLoaderCatalogUrl(originalUrl),
+            DownloadSourcePreference.Auto => true,
             _ => false
         };
-    }
-
-    private static bool IsLoaderCatalogUrl(string originalUrl)
-    {
-        if (!Uri.TryCreate(originalUrl, UriKind.Absolute, out var uri))
-            return false;
-
-        var path = uri.AbsolutePath;
-        if (uri.Host.Equals("meta.fabricmc.net", StringComparison.OrdinalIgnoreCase))
-        {
-            return path.StartsWith("/v2/versions/loader/", StringComparison.OrdinalIgnoreCase)
-                && !path.Contains("/profile", StringComparison.OrdinalIgnoreCase);
-        }
-
-        if (uri.Host.Equals("files.minecraftforge.net", StringComparison.OrdinalIgnoreCase))
-            return ForgeIndexPathRegex.IsMatch(path);
-
-        if (uri.Host.Equals("maven.neoforged.net", StringComparison.OrdinalIgnoreCase))
-        {
-            return path.StartsWith("/api/maven/versions/", StringComparison.OrdinalIgnoreCase)
-                || (path.StartsWith("/releases/", StringComparison.OrdinalIgnoreCase)
-                    && path.EndsWith(".xml", StringComparison.OrdinalIgnoreCase));
-        }
-
-        return false;
-    }
-
-    private static bool IsBinaryResourceUrl(string originalUrl)
-    {
-        if (!Uri.TryCreate(originalUrl, UriKind.Absolute, out var uri))
-            return false;
-
-        var path = uri.AbsolutePath;
-        if (path.EndsWith(".jar", StringComparison.OrdinalIgnoreCase)
-            || path.EndsWith(".zip", StringComparison.OrdinalIgnoreCase)
-            || path.EndsWith(".lzma", StringComparison.OrdinalIgnoreCase))
-        {
-            return true;
-        }
-
-        // 资源对象（assets）没有扩展名，只能按主机判定。
-        return uri.Host.Equals("resources.download.minecraft.net", StringComparison.OrdinalIgnoreCase)
-            || uri.Host.Equals("piston-data.mojang.com", StringComparison.OrdinalIgnoreCase)
-            || uri.Host.Equals("launcher.mojang.com", StringComparison.OrdinalIgnoreCase);
     }
 
     public static ResolvedDownloadRequest ResolveRequest(
@@ -138,9 +94,7 @@ internal static class MinecraftDownloadSourceResolver
             MinecraftDownloadResourceCategory.NeoForge => useBmclApi
                 ? BuildBmclNeoForgeUrl(originalUri)
                 : BuildOfficialNeoForgeUrl(originalUri),
-            MinecraftDownloadResourceCategory.MavenCentral => useBmclApi
-                ? BuildAliyunMavenUrl(originalUri)
-                : BuildMavenCentralUrl(originalUri),
+            MinecraftDownloadResourceCategory.MavenCentral => BuildOfficialMavenCentralUrl(originalUri),
             _ => originalUrl
         };
 
@@ -219,8 +173,7 @@ internal static class MinecraftDownloadSourceResolver
             (MinecraftDownloadResourceCategory.Fabric, true) => "BmclApiFabric",
             (MinecraftDownloadResourceCategory.NeoForge, false) => "NeoForgeOfficial",
             (MinecraftDownloadResourceCategory.NeoForge, true) => "BmclApiNeoForge",
-            (MinecraftDownloadResourceCategory.MavenCentral, false) => "MavenCentralOfficial",
-            (MinecraftDownloadResourceCategory.MavenCentral, true) => "AliyunMaven",
+            (MinecraftDownloadResourceCategory.MavenCentral, _) => "MavenCentralOfficial",
             (MinecraftDownloadResourceCategory.ThirdParty, _) => "ThirdParty",
             _ => "UnknownSource"
         };
@@ -368,20 +321,7 @@ internal static class MinecraftDownloadSourceResolver
         return uri.AbsoluteUri;
     }
 
-    private static string BuildAliyunMavenUrl(Uri uri)
-    {
-        if (uri.Host.Equals(AliyunMavenHost, StringComparison.OrdinalIgnoreCase))
-            return uri.AbsoluteUri;
-
-        if (uri.AbsolutePath.StartsWith(MavenCentralPathPrefix, StringComparison.OrdinalIgnoreCase))
-        {
-            return $"https://{AliyunMavenHost}{AliyunMavenPathPrefix}{uri.AbsolutePath[MavenCentralPathPrefix.Length..]}{uri.Query}";
-        }
-
-        return uri.AbsoluteUri;
-    }
-
-    private static string BuildMavenCentralUrl(Uri uri)
+    private static string BuildOfficialMavenCentralUrl(Uri uri)
     {
         if (!uri.Host.Equals(AliyunMavenHost, StringComparison.OrdinalIgnoreCase))
             return uri.AbsoluteUri;

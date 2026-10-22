@@ -307,7 +307,7 @@ internal sealed class ServerRuntimeInstaller : IServerRuntimeInstaller
         }
         progress?.Report(new LauncherProgress(ImportProgressStages.InstallingLoader, string.Empty));
         var artifact = ResolveForgeLikeInstallerArtifact(modpack);
-        var tempDirectory = Path.Combine(Path.GetTempPath(), $"blockhelm-server-loader-{Guid.NewGuid():N}");
+        var tempDirectory = Path.Combine(Path.GetTempPath(), $"mcl-server-loader-{Guid.NewGuid():N}");
         Directory.CreateDirectory(tempDirectory);
         try
         {

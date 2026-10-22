@@ -227,7 +227,7 @@ public sealed class ModUpdateFileTransaction : IModUpdateFileTransaction
     {
         for (var attempt = 0; attempt < 10; attempt++)
         {
-            var path = Path.Combine(modsDirectory, $".blockhelm-mod-update-{Guid.NewGuid():N}.tmp");
+            var path = Path.Combine(modsDirectory, $".mcl-mod-update-{Guid.NewGuid():N}.tmp");
             try
             {
                 using var reservation = new FileStream(path, FileMode.CreateNew, FileAccess.Write, FileShare.None);

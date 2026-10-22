@@ -94,7 +94,7 @@ public sealed class InstanceInstallCleanupService(
         }
 
         var activeLock = CrossProcessVersionLock.TryAcquire(
-            Path.Combine(pendingDirectory, PendingInstanceInstallDirectory.PendingLockFileName));
+            PendingInstanceInstallDirectory.GetPendingLockFilePath(pendingDirectory));
         if (activeLock is null)
         {
             logger.LogDebug(
@@ -134,7 +134,7 @@ public sealed class InstanceInstallCleanupService(
             if (!await CanRemoveCommittedMarkerAsync(settings, marker, markerPath).ConfigureAwait(false))
                 return;
 
-            File.Delete(Path.Combine(committedDirectory, PendingInstanceInstallDirectory.PendingLockFileName));
+            File.Delete(PendingInstanceInstallDirectory.GetPendingLockFilePath(committedDirectory));
             File.Delete(markerPath);
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or JsonException)

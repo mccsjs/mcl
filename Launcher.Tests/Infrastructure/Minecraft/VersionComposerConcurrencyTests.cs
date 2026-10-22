@@ -84,7 +84,7 @@ public sealed class VersionComposerConcurrencyTests : TestTempDirectory
             var absoluteUri = request.RequestUri?.AbsoluteUri ?? string.Empty;
             if (string.Equals(
                 absoluteUri,
-                "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json",
+                "https://bmclapi2.bangbang93.com/mc/game/version_manifest_v2.json",
                 StringComparison.Ordinal))
             {
                 if (Interlocked.Increment(ref manifestRequestCount) == 2)
@@ -95,7 +95,7 @@ public sealed class VersionComposerConcurrencyTests : TestTempDirectory
 
             var content = absoluteUri switch
             {
-                "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json" => """
+                "https://bmclapi2.bangbang93.com/mc/game/version_manifest_v2.json" => """
                     {
                       "versions": [
                         {
@@ -123,7 +123,25 @@ public sealed class VersionComposerConcurrencyTests : TestTempDirectory
                       }
                     }
                     """,
-                "https://meta.fabricmc.net/v2/versions/loader/1.20.2/0.19.3/profile/json" => """
+                "https://bmclapi2.bangbang93.com/mojang/1.20.2.json" => """
+                    {
+                      "id": "1.20.2",
+                      "type": "release",
+                      "downloads": {
+                        "client": {
+                          "url": "https://example.test/mojang/1.20.2.jar"
+                        }
+                      },
+                      "libraries": [
+                        { "name": "com.mojang:patchy:2.2.10" }
+                      ],
+                      "arguments": {
+                        "game": [ "--username", "${auth_player_name}" ],
+                        "jvm": [ "-Djava.library.path=${natives_directory}" ]
+                      }
+                    }
+                    """,
+                "https://bmclapi2.bangbang93.com/fabric-meta/v2/versions/loader/1.20.2/0.19.3/profile/json" => """
                     {
                       "id": "fabric-loader-0.19.3-1.20.2",
                       "inheritsFrom": "1.20.2",

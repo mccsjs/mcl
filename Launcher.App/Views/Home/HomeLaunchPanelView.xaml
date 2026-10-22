@@ -29,7 +29,7 @@
               Margin="0,0,144,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="72" />
+                <RowDefinition Height="84" />
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0"
@@ -262,10 +262,12 @@
                     </StackPanel.Style>
 
                     <TextBlock Text="{Binding LaunchStatusMessage}"
+                               Width="260"
                                Margin="0,0,0,8"
                                HorizontalAlignment="Center"
                                Foreground="{DynamicResource Brush.CCFFFFFF}"
                                FontSize="13"
+                               TextWrapping="NoWrap"
                                TextAlignment="Center" />
 
                     <Grid>
@@ -297,12 +299,15 @@
                     </Grid>
 
                     <TextBlock Text="{Binding LaunchDownloadSpeedText}"
-                               Width="260"
-                               Margin="0,7,0,0"
+                               Width="360"
+                               Margin="-50,7,-50,0"
                                HorizontalAlignment="Center"
                                Foreground="{DynamicResource Brush.8FB8C7D9}"
                                FontSize="11"
+                               TextWrapping="NoWrap"
                                TextAlignment="Center"
+                               TextTrimming="CharacterEllipsis"
+                               ToolTip="{Binding LaunchDownloadSpeedText}"
                                Visibility="{Binding HasLaunchDownloadSpeedText, Converter={StaticResource BooleanToMenuTextVisibilityConverter}}" />
                 </StackPanel>
             </Grid>

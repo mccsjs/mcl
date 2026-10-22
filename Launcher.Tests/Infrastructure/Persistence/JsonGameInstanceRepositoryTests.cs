@@ -225,10 +225,10 @@ public sealed class JsonGameInstanceRepositoryTests : TestTempDirectory
         Assert.True(File.Exists(Path.Combine(oldDirectory, "Old Pack.json")));
         Assert.True(File.Exists(Path.Combine(oldDirectory, "Old Pack.jar")));
         Assert.True(Directory.Exists(Path.Combine(oldDirectory, "Old Pack-natives")));
-        Assert.False(File.Exists(Path.Combine(oldDirectory, ".bhl-rename-pending.json")));
+        Assert.False(File.Exists(Path.Combine(oldDirectory, ".mcl-rename-pending.json")));
         Assert.Empty(Directory.EnumerateDirectories(
             Path.Combine(settings.MinecraftDirectory, "versions"),
-            ".bhl-rename-pending-*"));
+            ".mcl-rename-pending-*"));
         using (var document = JsonDocument.Parse(await File.ReadAllTextAsync(Path.Combine(oldDirectory, "Old Pack.json"))))
         {
             Assert.Equal("Old Pack", document.RootElement.GetProperty("id").GetString());
@@ -262,8 +262,8 @@ public sealed class JsonGameInstanceRepositoryTests : TestTempDirectory
                     CreateVersionDirectory(settings.MinecraftDirectory, "New Pack");
                     WriteInstanceSettings(destination, "replacement");
                     File.Copy(
-                        Path.Combine(displacedOriginal, ".bhl-rename-pending.json"),
-                        Path.Combine(destination, ".bhl-rename-pending.json"));
+                        Path.Combine(displacedOriginal, ".mcl-rename-pending.json"),
+                        Path.Combine(destination, ".mcl-rename-pending.json"));
                     File.WriteAllText(Path.Combine(destination, "replacement.txt"), "keep");
                 }
 
@@ -284,8 +284,8 @@ public sealed class JsonGameInstanceRepositoryTests : TestTempDirectory
         Assert.False(Directory.Exists(oldDirectory));
         Assert.True(Directory.Exists(displacedOriginal));
         Assert.Equal("keep", await File.ReadAllTextAsync(Path.Combine(replacementDirectory, "replacement.txt")));
-        Assert.True(File.Exists(Path.Combine(replacementDirectory, ".bhl-rename-aborted.json")));
-        Assert.False(File.Exists(Path.Combine(replacementDirectory, ".bhl-rename-pending.json")));
+        Assert.True(File.Exists(Path.Combine(replacementDirectory, ".mcl-rename-aborted.json")));
+        Assert.False(File.Exists(Path.Combine(replacementDirectory, ".mcl-rename-pending.json")));
     }
 
     [Fact]
@@ -311,7 +311,7 @@ public sealed class JsonGameInstanceRepositoryTests : TestTempDirectory
 
         Assert.Equal(0, moveAttempts);
         Assert.Equal("keep", await File.ReadAllTextAsync(Path.Combine(directory, "replacement.txt")));
-        Assert.False(File.Exists(Path.Combine(directory, ".bhl-delete-pending-.json")));
+        Assert.False(File.Exists(Path.Combine(directory, ".mcl-delete-pending.json")));
     }
 
     [Fact]

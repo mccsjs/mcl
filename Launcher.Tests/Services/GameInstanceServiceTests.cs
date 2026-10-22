@@ -118,9 +118,9 @@ public sealed class GameInstanceServiceTests : TestTempDirectory
 
         var versionsDirectory = Path.Combine(settings.MinecraftDirectory, "versions");
         Assert.False(Directory.Exists(Path.Combine(versionsDirectory, "first")));
-        var pendingDirectory = Path.Combine(versionsDirectory, ".bhl-delete-pending-first-a83f21c4");
+        var pendingDirectory = Path.Combine(versionsDirectory, ".mcl-delete-pending-first-a83f21c4");
         Assert.True(Directory.Exists(pendingDirectory));
-        Assert.True(File.Exists(Path.Combine(pendingDirectory, ".bhl-delete-pending-.json")));
+        Assert.True(File.Exists(Path.Combine(pendingDirectory, ".mcl-delete-pending.json")));
         Assert.Empty(await repository.GetAllAsync());
         Assert.Empty(await service.GetInstancesAsync());
         Assert.Equal(string.Empty, (await settingsService.LoadAsync()).DefaultInstanceId);

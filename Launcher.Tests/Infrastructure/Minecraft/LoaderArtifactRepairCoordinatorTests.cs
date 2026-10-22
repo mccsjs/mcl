@@ -51,10 +51,23 @@ public sealed class LoaderArtifactRepairCoordinatorTests : TestTempDirectory
         Assert.True(requiresRepair);
     }
 
+    [Fact]
+    public async Task TrustedProcessorOutputRequiresRepairAfterSameSizeContentChange()
+    {
+        var requiresRepair = await RequiresRepairAsync(
+            LoaderKind.Forge,
+            LoaderArtifactKind.ProcessorOutput,
+            GameFileVerificationLevel.HashVerified,
+            expectedContent: "old!",
+            actualContent: "new!");
+
+        Assert.True(requiresRepair);
+    }
+
     [Theory]
-    [InlineData((int)LoaderArtifactKind.ProcessorOutput, GameFileVerificationLevel.HashVerified)]
     [InlineData((int)LoaderArtifactKind.RuntimeLibrary, GameFileVerificationLevel.TrustedAcquisitionHash)]
-    public async Task TrustedArtifactsStillRequireRepairAfterSameSizeContentChange(
+    [InlineData((int)LoaderArtifactKind.InstallerPrerequisite, GameFileVerificationLevel.TrustedAcquisitionHash)]
+    public async Task NonProcessorArtifactsDoNotRequireLoaderInstallerReplay(
         int artifactKind,
         GameFileVerificationLevel verificationLevel)
     {
@@ -65,7 +78,7 @@ public sealed class LoaderArtifactRepairCoordinatorTests : TestTempDirectory
             expectedContent: "old!",
             actualContent: "new!");
 
-        Assert.True(requiresRepair);
+        Assert.False(requiresRepair);
     }
 
     private async Task<bool> RequiresRepairAsync(

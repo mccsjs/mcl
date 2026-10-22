@@ -19,7 +19,8 @@ namespace Launcher.Infrastructure.Modpacks;
 
 internal sealed class ModpackSandboxCleanupService : IModpackSandboxCleanupService
 {
-    internal const string MarkerFileName = ".bhl-modpack-sandbox.json";
+    internal const string MarkerFileName = ".mcl-modpack-sandbox.json";
+    private const string LegacyMarkerFileName = ".bhl-modpack-sandbox.json";
     private const string LockDirectoryName = ".locks";
     private const int MarkerSchemaVersion = 1;
     private readonly object tasksLock = new();
@@ -268,7 +269,10 @@ internal sealed class ModpackSandboxCleanupService : IModpackSandboxCleanupServi
             var transactionId = Path.GetFileName(normalized);
             if (!Guid.TryParseExact(transactionId, "N", out _))
                 return false;
-            if (!TryReadMarker(Path.Combine(normalized, MarkerFileName), out var parsed)
+            var markerPath = Path.Combine(normalized, MarkerFileName);
+            if (!File.Exists(markerPath))
+                markerPath = Path.Combine(normalized, LegacyMarkerFileName);
+            if (!TryReadMarker(markerPath, out var parsed)
                 || !IsValidMarker(parsed, transactionId, kind))
                 return false;
             marker = parsed;

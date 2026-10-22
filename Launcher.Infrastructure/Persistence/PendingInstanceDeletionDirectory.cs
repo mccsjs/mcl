@@ -12,9 +12,12 @@ namespace Launcher.Infrastructure.Persistence;
 
 internal static class PendingInstanceDeletionDirectory
 {
-    public const string Prefix = ".bhl-delete-pending-";
-    public const string MarkerFileName = ".bhl-delete-pending-.json";
-    public const string AbortedMarkerFileName = ".bhl-delete-aborted.json";
+    public const string Prefix = ".mcl-delete-pending-";
+    private const string LegacyPrefix = ".bhl-delete-pending-";
+    public const string MarkerFileName = ".mcl-delete-pending.json";
+    private const string LegacyMarkerFileName = ".bhl-delete-pending-.json";
+    public const string AbortedMarkerFileName = ".mcl-delete-aborted.json";
+    private const string LegacyAbortedMarkerFileName = ".bhl-delete-aborted.json";
     public static readonly JsonSerializerOptions MarkerJsonOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -25,10 +28,25 @@ internal static class PendingInstanceDeletionDirectory
     public static bool IsPending(string path)
     {
         var name = Path.GetFileName(path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
-        return name.StartsWith(Prefix, StringComparison.OrdinalIgnoreCase);
+        return name.StartsWith(Prefix, StringComparison.OrdinalIgnoreCase)
+               || name.StartsWith(LegacyPrefix, StringComparison.OrdinalIgnoreCase);
     }
 
-    public static string GetMarkerPath(string directory) => Path.Combine(directory, MarkerFileName);
+    public static string GetMarkerPath(string directory)
+    {
+        var currentPath = Path.Combine(directory, MarkerFileName);
+        return File.Exists(currentPath) || !DirectoryNameIsLegacy(directory)
+            ? currentPath
+            : Path.Combine(directory, LegacyMarkerFileName);
+    }
+
+    public static string GetAbortedMarkerPath(string directory) => Path.Combine(
+        directory,
+        DirectoryNameIsLegacy(directory) ? LegacyAbortedMarkerFileName : AbortedMarkerFileName);
+
+    private static bool DirectoryNameIsLegacy(string directory) =>
+        Path.GetFileName(directory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
+            .StartsWith(LegacyPrefix, StringComparison.OrdinalIgnoreCase);
 
     public static bool TryReadValidMarker(string directory, out PendingInstanceDeletionMarker marker)
     {
@@ -47,7 +65,8 @@ internal static class PendingInstanceDeletionDirectory
                 || (parsed.SchemaVersion == 2 && string.IsNullOrWhiteSpace(parsed.InstanceId))
                 || !Guid.TryParseExact(parsed.TransactionId, "N", out _))
                 return false;
-            var expectedName = $"{Prefix}{parsed.VersionName}-{parsed.TransactionId[..8].ToLowerInvariant()}";
+            var prefix = DirectoryNameIsLegacy(directory) ? LegacyPrefix : Prefix;
+            var expectedName = $"{prefix}{parsed.VersionName}-{parsed.TransactionId[..8].ToLowerInvariant()}";
             if (!string.Equals(Path.GetFileName(directory), expectedName, StringComparison.OrdinalIgnoreCase))
                 return false;
             marker = parsed;

@@ -30,7 +30,8 @@ internal sealed class TerracottaProvisioningService : ITerracottaProvisioningSer
     private const long MaximumMetadataBytes = 2L * 1024 * 1024;
     private const long MaximumArchiveBytes = 64L * 1024 * 1024;
     private const long MaximumExtractedFileBytes = 64L * 1024 * 1024;
-    private const string ManifestFileName = ".blockhelm-module.json";
+    private const string ManifestFileName = ".mcl-module.json";
+    private const string LegacyManifestFileName = ".blockhelm-module.json";
     private const string ExecutableFileName = "terracotta.exe";
     private const string RuntimeFileName = "VCRUNTIME140.DLL";
 
@@ -775,6 +776,8 @@ internal sealed class TerracottaProvisioningService : ITerracottaProvisioningSer
     private static ModuleManifest? ReadManifest(string directory)
     {
         var path = Path.Combine(directory, ManifestFileName);
+        if (!File.Exists(path))
+            path = Path.Combine(directory, LegacyManifestFileName);
         return File.Exists(path)
             ? JsonSerializer.Deserialize<ModuleManifest>(File.ReadAllText(path))
             : null;

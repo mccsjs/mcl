@@ -21,7 +21,7 @@ namespace Launcher.Domain.Models;
 
 public enum DownloadSourcePreference
 {
-    /// <summary>自动：二进制资源走镜像，元数据走官方。</summary>
+    /// <summary>自动：已知下载源优先使用 PCL 同款镜像，失败后回退原始源。</summary>
     Auto = 0,
 
     /// <summary>官方源优先，失败回退镜像。</summary>

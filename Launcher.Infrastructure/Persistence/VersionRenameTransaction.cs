@@ -100,7 +100,7 @@ internal sealed partial class VersionRenameTransaction
             }
             catch (Exception cleanupException)
             {
-                var abortedMarkerPath = Path.Combine(sourceDirectory, PendingInstanceRenameDirectory.AbortedMarkerFileName);
+                var abortedMarkerPath = PendingInstanceRenameDirectory.GetAbortedMarkerPath(sourceDirectory);
                 try
                 {
                     File.Move(markerPath, abortedMarkerPath, overwrite: true);

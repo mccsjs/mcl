@@ -46,9 +46,9 @@ public sealed class InstanceInstallTransactionTests : TestTempDirectory
         Assert.True(File.Exists(Path.Combine(transaction.FinalDirectory, "Test.json")));
         Assert.True(File.Exists(Path.Combine(transaction.FinalDirectory, "Test.jar")));
         Assert.True(Directory.Exists(Path.Combine(transaction.FinalDirectory, "mods")));
-        Assert.True(File.Exists(Path.Combine(transaction.FinalDirectory, ".bhl-install-pending.json")));
+        Assert.True(File.Exists(Path.Combine(transaction.FinalDirectory, ".mcl-install-pending.json")));
         await transaction.CompleteLogicalCommitAsync();
-        Assert.False(File.Exists(Path.Combine(transaction.FinalDirectory, ".bhl-install-pending.json")));
+        Assert.False(File.Exists(Path.Combine(transaction.FinalDirectory, ".mcl-install-pending.json")));
         using var settings = JsonDocument.Parse(await File.ReadAllTextAsync(
             Path.Combine(transaction.FinalDirectory, "MCL", "instance-settings.json")));
         Assert.Equal("Test", settings.RootElement.GetProperty("VersionName").GetString());
@@ -88,7 +88,7 @@ public sealed class InstanceInstallTransactionTests : TestTempDirectory
         Assert.False(Directory.Exists(Path.Combine(minecraftDirectory, "versions", "Test")));
         Assert.Empty(Directory.EnumerateDirectories(
             Path.Combine(minecraftDirectory, "versions"),
-            ".bhl-install-pending-*"));
+            ".mcl-install-pending-*"));
     }
 
     [Fact]
@@ -100,6 +100,7 @@ public sealed class InstanceInstallTransactionTests : TestTempDirectory
         await using var transaction = await service.BeginAsync(
             minecraftDirectory, "Test", "instance", "game", false);
 
+        Assert.Contains(".mcl-install-pending-Test-", transaction.PendingDirectory);
         Assert.True(File.Exists(Path.Combine(
             transaction.PendingDirectory,
             PendingInstanceInstallDirectory.MarkerFileName)));
@@ -109,6 +110,28 @@ public sealed class InstanceInstallTransactionTests : TestTempDirectory
         Assert.Equal("instance", marker.InstanceId);
         Assert.False(Directory.Exists(PendingInstanceInstallDirectory.GetPreparationRoot(
             minecraftDirectory)));
+    }
+
+    [Fact]
+    public async Task StartupCleanupStillRecognizesLegacyBhlInstallDirectories()
+    {
+        var settings = new LauncherSettings
+        {
+            DataDirectory = TempRoot,
+            MinecraftDirectory = Path.Combine(TempRoot, ".minecraft")
+        };
+        var legacyPendingDirectory = Path.Combine(
+            settings.MinecraftDirectory,
+            "versions",
+            ".bhl-install-pending-Test-a83f21c4");
+        Directory.CreateDirectory(legacyPendingDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(legacyPendingDirectory, ".bhl-install-pending.json"),
+            """{"schemaVersion":1,"transactionId":"a83f21c4000000000000000000000000","instanceId":"legacy","logicalVersionName":"Test","installKind":"game","initializeDefaultIfEmpty":false,"createdAtUtc":"2026-07-13T00:00:00Z"}""");
+
+        await new InstanceInstallCleanupService(new TestSettingsService(settings)).CleanupPendingAsync();
+
+        Assert.False(Directory.Exists(legacyPendingDirectory));
     }
 
     [Fact]
@@ -247,8 +270,8 @@ public sealed class InstanceInstallTransactionTests : TestTempDirectory
 
         Assert.Equal("Same Pack", first.ResolvedInstanceName);
         Assert.Equal("Same Pack (1)", second.ResolvedInstanceName);
-        Assert.Contains(".bhl-install-pending-Same Pack-", first.InstanceDirectory);
-        Assert.Contains(".bhl-install-pending-Same Pack (1)-", second.InstanceDirectory);
+        Assert.Contains(".mcl-install-pending-Same Pack-", first.InstanceDirectory);
+        Assert.Contains(".mcl-install-pending-Same Pack (1)-", second.InstanceDirectory);
 
         await staging.CleanupFailedImportAsync(first, null);
         await staging.CleanupFailedImportAsync(second, null);
@@ -353,7 +376,7 @@ public sealed class InstanceInstallTransactionTests : TestTempDirectory
         Assert.Equal(markerWasPublished, !Directory.Exists(preparationRoot));
         Assert.False(Directory.Exists(Path.Combine(
             versionsDirectory,
-            ".bhl-install-pending-Test-a83f21c4")));
+            ".mcl-install-pending-Test-a83f21c4")));
     }
 
     [Fact]
@@ -372,7 +395,7 @@ public sealed class InstanceInstallTransactionTests : TestTempDirectory
 
         Assert.True(Directory.Exists(finalDirectory));
         Assert.True(File.Exists(Path.Combine(finalDirectory, "Test.json")));
-        Assert.False(File.Exists(Path.Combine(finalDirectory, ".bhl-install-pending.json")));
+        Assert.False(File.Exists(Path.Combine(finalDirectory, ".mcl-install-pending.json")));
         Assert.Equal("instance", (await settingsService.LoadAsync()).DefaultInstanceId);
     }
 
@@ -387,7 +410,7 @@ public sealed class InstanceInstallTransactionTests : TestTempDirectory
         var settingsService = new FailingSaveSettingsService(settings);
         var finalDirectory = Path.Combine(settings.MinecraftDirectory, "versions", "Test");
         await WriteCommittedInstallAsync(finalDirectory);
-        var markerPath = Path.Combine(finalDirectory, ".bhl-install-pending.json");
+        var markerPath = Path.Combine(finalDirectory, ".mcl-install-pending.json");
 
         await new InstanceInstallCleanupService(settingsService).CleanupPendingAsync();
 
@@ -411,7 +434,7 @@ public sealed class InstanceInstallTransactionTests : TestTempDirectory
             Path.Combine(finalDirectory, "Test.json"),
             JsonSerializer.Serialize(new { id = versionJsonId }));
         await File.WriteAllTextAsync(
-            Path.Combine(finalDirectory, ".bhl-install-pending.json"),
+            Path.Combine(finalDirectory, ".mcl-install-pending.json"),
             JsonSerializer.Serialize(new
             {
                 schemaVersion,

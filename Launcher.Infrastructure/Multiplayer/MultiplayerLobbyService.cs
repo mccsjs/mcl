@@ -301,7 +301,7 @@ internal sealed class MultiplayerLobbyService : IMultiplayerLobbyService
 
         var handoffPath = Path.Combine(
             Path.GetTempPath(),
-            $"blockhelm-terracotta-{Guid.NewGuid():N}.json");
+            $"mcl-terracotta-{Guid.NewGuid():N}.json");
         Process? process = null;
         try
         {

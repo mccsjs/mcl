@@ -126,7 +126,7 @@ public sealed class InstanceInstallTransactionService : IInstanceInstallTransact
                 preparationDirectoryOwned = false;
                 TryDeleteEmptyDirectory(preparationRoot);
                 pendingLock = new FileStream(
-                    Path.Combine(pendingDirectory, PendingInstanceInstallDirectory.PendingLockFileName),
+                    PendingInstanceInstallDirectory.GetPendingLockFilePath(pendingDirectory),
                     FileMode.OpenOrCreate,
                     FileAccess.ReadWrite,
                     FileShare.Read | FileShare.Delete);
@@ -313,7 +313,7 @@ public sealed class InstanceInstallTransactionService : IInstanceInstallTransact
             cancellationToken.ThrowIfCancellationRequested();
             try
             {
-                File.Delete(Path.Combine(FinalDirectory, PendingInstanceInstallDirectory.PendingLockFileName));
+                File.Delete(PendingInstanceInstallDirectory.GetPendingLockFilePath(FinalDirectory));
                 File.Delete(Path.Combine(FinalDirectory, PendingInstanceInstallDirectory.MarkerFileName));
             }
             catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)

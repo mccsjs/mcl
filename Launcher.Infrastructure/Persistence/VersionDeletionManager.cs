@@ -210,9 +210,7 @@ internal sealed class VersionDeletionManager
 
         if (!Directory.Exists(normalizedStagedDirectory))
             return true;
-        if (File.Exists(Path.Combine(
-                normalizedStagedDirectory,
-                PendingInstanceDeletionDirectory.AbortedMarkerFileName)))
+        if (File.Exists(PendingInstanceDeletionDirectory.GetAbortedMarkerPath(normalizedStagedDirectory)))
         {
             logger.LogWarning(
                 "Pending deletion directory was preserved because its transaction was aborted. StagedDirectory={StagedDirectory}",
@@ -340,7 +338,7 @@ internal sealed class VersionDeletionManager
     private void QuarantineMarker(string directory)
     {
         var markerPath = PendingInstanceDeletionDirectory.GetMarkerPath(directory);
-        var abortedPath = Path.Combine(directory, PendingInstanceDeletionDirectory.AbortedMarkerFileName);
+        var abortedPath = PendingInstanceDeletionDirectory.GetAbortedMarkerPath(directory);
         try
         {
             if (File.Exists(markerPath))
@@ -359,7 +357,7 @@ internal sealed class VersionDeletionManager
     {
         if (!Directory.Exists(stagedDirectory))
             return false;
-        if (File.Exists(Path.Combine(stagedDirectory, PendingInstanceDeletionDirectory.AbortedMarkerFileName)))
+        if (File.Exists(PendingInstanceDeletionDirectory.GetAbortedMarkerPath(stagedDirectory)))
             return false;
         if (!PendingInstanceDeletionDirectory.TryReadValidMarker(stagedDirectory, out var marker))
             return false;

@@ -27,7 +27,7 @@ internal sealed partial class VersionRenameTransaction
         }
         catch (Exception deleteException)
         {
-            var abortedMarkerPath = Path.Combine(directory, PendingInstanceRenameDirectory.AbortedMarkerFileName);
+            var abortedMarkerPath = PendingInstanceRenameDirectory.GetAbortedMarkerPath(directory);
             try
             {
                 quarantineMarker(markerPath, abortedMarkerPath);
@@ -82,7 +82,7 @@ internal sealed partial class VersionRenameTransaction
     private void QuarantineUnsafeMarker(string directory, PendingInstanceRenameMarker marker)
     {
         var markerPath = PendingInstanceRenameDirectory.GetMarkerPath(directory);
-        var abortedMarkerPath = Path.Combine(directory, PendingInstanceRenameDirectory.AbortedMarkerFileName);
+        var abortedMarkerPath = PendingInstanceRenameDirectory.GetAbortedMarkerPath(directory);
         try
         {
             if (File.Exists(markerPath))
@@ -114,7 +114,7 @@ internal sealed partial class VersionRenameTransaction
             return;
         }
 
-        var abortedMarkerPath = Path.Combine(directory, PendingInstanceRenameDirectory.AbortedMarkerFileName);
+        var abortedMarkerPath = PendingInstanceRenameDirectory.GetAbortedMarkerPath(directory);
         try
         {
             quarantineMarker(markerPath, abortedMarkerPath);
@@ -155,7 +155,7 @@ internal sealed partial class VersionRenameTransaction
 
     private void TryDeleteAbortedMarker(string directory)
     {
-        var path = Path.Combine(directory, PendingInstanceRenameDirectory.AbortedMarkerFileName);
+        var path = PendingInstanceRenameDirectory.GetAbortedMarkerPath(directory);
         try
         {
             if (File.Exists(path))

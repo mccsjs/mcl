@@ -219,16 +219,12 @@ internal sealed partial class ManagedVersionRepairService : IManagedVersionRepai
             downloadBatch,
             cancellationToken);
 
-        ReportProgress(
-            progress,
-            allowRepair ? LaunchProgressStages.RepairingLibraries : LaunchProgressStages.CheckingFiles,
-            allowRepair ? "Repairing shared libraries" : "Checking launch files",
-            48);
         await EnsureLibrariesAsync(
             minecraftDirectory,
             resolvedVersion.VersionJson,
             allowRepair,
             downloadBatch,
+            progress,
             cancellationToken);
 
         ReportProgress(

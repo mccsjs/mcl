@@ -117,6 +117,7 @@ private async Task EnsureVersionJarAsync(
         JsonObject versionJson,
         bool allowRepair,
         ManagedVersionRepairDownloadBatch downloadBatch,
+        IProgress<LauncherProgress>? progress,
         CancellationToken cancellationToken)
     {
         if (versionJson["libraries"] is not JsonArray libraries)
@@ -166,6 +167,14 @@ private async Task EnsureVersionJarAsync(
         }
 
         // 先收集缺失项再交给批次统一并发、限速和汇报进度。
+        if (downloads.Count > 0)
+        {
+            ReportProgress(
+                progress,
+                LaunchProgressStages.RepairingLibraries,
+                "Repairing shared libraries",
+                48);
+        }
         await downloadBatch.DownloadAllAsync(downloads, cancellationToken).ConfigureAwait(false);
     }
 

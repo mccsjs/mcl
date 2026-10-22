@@ -359,11 +359,11 @@ public sealed class SegmentedDownloadTests : TestTempDirectory
 
         Assert.Empty(Directory.EnumerateFiles(
             directory,
-            $".{Path.GetFileName(destination)}.bhl-pending-*.tmp",
+            $".{Path.GetFileName(destination)}.mcl-pending-*.tmp",
             SearchOption.TopDirectoryOnly));
         Assert.Empty(Directory.EnumerateFiles(
             directory,
-            $"{Path.GetFileName(destination)}.bhl-pending-*.tmp",
+            $"{Path.GetFileName(destination)}.mcl-pending-*.tmp",
             SearchOption.TopDirectoryOnly));
     }
 

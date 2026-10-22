@@ -18,15 +18,38 @@ namespace Launcher.Infrastructure.Persistence;
 
 internal static class PendingInstanceRenameDirectory
 {
-    public const string Prefix = ".bhl-rename-pending-";
-    public const string MarkerFileName = ".bhl-rename-pending.json";
-    public const string AbortedMarkerFileName = ".bhl-rename-aborted.json";
+    public const string Prefix = ".mcl-rename-pending-";
+    private const string LegacyPrefix = ".bhl-rename-pending-";
+    public const string MarkerFileName = ".mcl-rename-pending.json";
+    private const string LegacyMarkerFileName = ".bhl-rename-pending.json";
+    public const string AbortedMarkerFileName = ".mcl-rename-aborted.json";
+    private const string LegacyAbortedMarkerFileName = ".bhl-rename-aborted.json";
 
-    public static bool IsPending(string path) =>
-        Path.GetFileName(path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
-            .StartsWith(Prefix, StringComparison.OrdinalIgnoreCase);
+    public static bool IsPending(string path)
+    {
+        var name = Path.GetFileName(path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+        return name.StartsWith(Prefix, StringComparison.OrdinalIgnoreCase)
+               || name.StartsWith(LegacyPrefix, StringComparison.OrdinalIgnoreCase);
+    }
 
-    public static string GetMarkerPath(string directory) => Path.Combine(directory, MarkerFileName);
+    public static string GetMarkerPath(string directory)
+    {
+        var currentPath = Path.Combine(directory, MarkerFileName);
+        if (File.Exists(currentPath))
+            return currentPath;
+        var legacyPath = Path.Combine(directory, LegacyMarkerFileName);
+        return File.Exists(legacyPath) || IsLegacy(directory) ? legacyPath : currentPath;
+    }
+
+    public static string GetAbortedMarkerPath(string directory) => Path.Combine(
+        directory,
+        File.Exists(Path.Combine(directory, LegacyMarkerFileName)) || IsLegacy(directory)
+            ? LegacyAbortedMarkerFileName
+            : AbortedMarkerFileName);
+
+    private static bool IsLegacy(string directory) =>
+        Path.GetFileName(directory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
+            .StartsWith(LegacyPrefix, StringComparison.OrdinalIgnoreCase);
 }
 
 internal sealed record PendingInstanceRenameMarker
@@ -149,6 +172,10 @@ internal static class PendingInstanceRenameMarkerFile
                     directory,
                     PendingInstanceRenameDirectory.MarkerFileName,
                     SearchOption.TopDirectoryOnly)
+                .Concat(Directory.EnumerateFiles(
+                    directory,
+                    ".bhl-rename-pending.json",
+                    SearchOption.TopDirectoryOnly))
                 .Any()
                 ? null
                 : new(PendingInstanceRenameMarkerStatus.Missing);
@@ -180,7 +207,10 @@ internal static class PendingInstanceRenameMarkerFile
             directory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
         if (PendingInstanceRenameDirectory.IsPending(directory))
         {
-            var expectedName = $"{PendingInstanceRenameDirectory.Prefix}{marker.OldName}-{marker.TransactionId[..8].ToLowerInvariant()}";
+            var prefix = directoryName.StartsWith(".bhl-rename-pending-", StringComparison.OrdinalIgnoreCase)
+                ? ".bhl-rename-pending-"
+                : PendingInstanceRenameDirectory.Prefix;
+            var expectedName = $"{prefix}{marker.OldName}-{marker.TransactionId[..8].ToLowerInvariant()}";
             if (!string.Equals(directoryName, expectedName, StringComparison.OrdinalIgnoreCase))
                 throw new InvalidDataException("Pending instance rename marker does not match its staging directory.");
             return;

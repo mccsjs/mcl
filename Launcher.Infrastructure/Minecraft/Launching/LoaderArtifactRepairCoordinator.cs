@@ -71,6 +71,13 @@ internal sealed class LoaderArtifactRepairCoordinator
 
         foreach (var artifact in readResult.Manifest!.Artifacts)
         {
+            // Installer prerequisites are only needed while running the loader
+            // installer. Runtime libraries are listed in the resolved version
+            // metadata and can be repaired directly by EnsureLibrariesAsync.
+            // Only processor outputs require replaying the loader installer.
+            if (artifact.Kind is not LoaderArtifactKind.ProcessorOutput)
+                continue;
+
             var path = LoaderArtifactManifestStore.ResolveManagedPath(minecraftDirectory, artifact.RelativePath);
             MinecraftPathGuard.EnsureSafeFileDestination(path, minecraftDirectory, "Managed loader artifact");
             var usesRecordedHashes = LoaderArtifactVerificationPolicy.UsesRecordedHashes(artifact);
@@ -84,7 +91,15 @@ internal sealed class LoaderArtifactRepairCoordinator
                     cancellationToken)
                 .ConfigureAwait(false);
             if (status != MinecraftFileIntegrityStatus.Valid)
+            {
+                logger.LogInformation(
+                    "Loader processor output requires regeneration. VersionName={VersionName} Loader={Loader} Artifact={Artifact} Status={Status}",
+                    versionName,
+                    identity.LoaderKind,
+                    artifact.RelativePath,
+                    status);
                 return true;
+            }
         }
 
         return false;

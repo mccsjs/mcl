@@ -26,7 +26,7 @@ namespace Launcher.Infrastructure.Minecraft;
 internal static class MinecraftSharedContentCopier
 {
     private const int CopyBufferSize = 128 * 1024;
-    private const string TemporaryFilePrefix = ".bhl-copy-pending-";
+    private const string TemporaryFilePrefix = ".mcl-copy-pending-";
     private const string TemporaryFileSuffix = ".tmp";
 
     public static MinecraftSharedContentCopyResult CopySharedRuntimeContent(

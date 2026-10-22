@@ -18,6 +18,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
+using System.Runtime.ExceptionServices;
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -682,6 +683,12 @@ internal sealed class RequiredGameFileManifestBuilder
             ManagedRoot: versionDirectory));
         foreach (var artifact in contribution.Manifest.Artifacts)
         {
+            // These libraries are only consumed while the Forge/NeoForge
+            // installer runs. The sandbox provisions them again if a genuine
+            // processor-output repair is needed, so they are not launch files.
+            if (artifact.Kind == LoaderArtifactKind.InstallerPrerequisite)
+                continue;
+
             var usesRecordedHashes = LoaderArtifactVerificationPolicy.UsesRecordedHashes(artifact);
             Add(files, new RequiredGameFile(
                 LoaderArtifactManifestStore.ResolveManagedPath(request.MinecraftDirectory, artifact.RelativePath),
@@ -858,6 +865,8 @@ internal sealed class RequiredGameFileManifestBuilder
 
 internal static class GameFileManifestValidator
 {
+    private const int MaximumParallelValidations = 4;
+
     public static async Task<GameFileValidationReport> ValidateAsync(RequiredGameFileManifest manifest, CancellationToken cancellationToken)
     {
         return await ValidateAsync(manifest, operationContext: null, cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -868,6 +877,33 @@ internal static class GameFileManifestValidator
         MinecraftDownloadOperationContext? operationContext,
         CancellationToken cancellationToken)
     {
+        var files = manifest.Files.Where(file => file.Required).ToArray();
+        var outcomes = new FileValidationOutcome[files.Length];
+        await Parallel.ForEachAsync(
+                Enumerable.Range(0, files.Length),
+                new ParallelOptions
+                {
+                    CancellationToken = cancellationToken,
+                    MaxDegreeOfParallelism = MaximumParallelValidations
+                },
+                async (index, token) =>
+                {
+                    try
+                    {
+                        outcomes[index] = await ValidateFileAsync(files[index], operationContext, token)
+                            .ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException) when (token.IsCancellationRequested)
+                    {
+                        throw;
+                    }
+                    catch (Exception exception)
+                    {
+                        outcomes[index] = new FileValidationOutcome(0, 0, 0, 0, null, 0, 0, exception);
+                    }
+                })
+            .ConfigureAwait(false);
+
         var failures = new List<GameFileRepairFailure>();
         var missing = 0;
         var corrupted = 0;
@@ -875,76 +911,21 @@ internal static class GameFileManifestValidator
         var repairable = 0;
         var fullVerificationCount = 0;
         var currentOperationVerificationReuseCount = 0;
-        foreach (var file in manifest.Files.Where(file => file.Required))
+        foreach (var outcome in outcomes)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            if (!string.IsNullOrWhiteSpace(file.ManagedRoot))
-            {
-                MinecraftPathGuard.EnsureSafeFileDestination(
-                    file.TargetPath,
-                    file.ManagedRoot,
-                    $"Required {file.Category} file");
-            }
-            if (file.ForcedFailureReason is { } forcedReason)
-            {
-                if (forcedReason == GameFileRepairFailureReason.MetadataIncomplete)
-                    unverifiable++;
-                else if (forcedReason == GameFileRepairFailureReason.Missing)
-                    missing++;
-                else
-                    corrupted++;
-                if (!string.Equals(file.RecoveryMethod, "Unavailable", StringComparison.Ordinal))
-                    repairable++;
-                failures.Add(new GameFileRepairFailure(
-                    file.TargetPath,
-                    file.Category,
-                    forcedReason,
-                    file.RecoveryMethod,
-                    file.Reason));
-                continue;
-            }
-            using var verifiedLease = AcquireCurrentOperationVerificationLease(file, operationContext);
-            var verifiedByCurrentOperation = verifiedLease is not null;
-            var verification = verifiedByCurrentOperation
-                ? MinecraftFileVerification.SizeOnly
-                : file.Verification;
-            if (verifiedByCurrentOperation)
-                currentOperationVerificationReuseCount++;
-            else if (verification == MinecraftFileVerification.Full)
-                fullVerificationCount++;
-            var status = await MinecraftFileIntegrity.EvaluateAsync(file.TargetPath, file.Sha1, file.Size, verification, cancellationToken).ConfigureAwait(false);
-            if (status == MinecraftFileIntegrityStatus.Valid
-                && file.Sha256 is { Length: 64 } expectedSha256
-                && !await MatchesSha256Async(file.TargetPath, expectedSha256, cancellationToken).ConfigureAwait(false))
-            {
-                status = MinecraftFileIntegrityStatus.HashMismatch;
-            }
-            if (status == MinecraftFileIntegrityStatus.Valid
-                && file.Category.StartsWith("Loader", StringComparison.Ordinal)
-                && string.IsNullOrWhiteSpace(file.Sha1)
-                && IsArchivePath(file.TargetPath)
-                && !await IsReadableArchiveAsync(file.TargetPath, cancellationToken).ConfigureAwait(false))
-            {
-                status = MinecraftFileIntegrityStatus.HashMismatch;
-            }
-            if (status == MinecraftFileIntegrityStatus.Valid && IsOrdinaryFile(file.TargetPath))
-            {
-                if (string.IsNullOrWhiteSpace(file.Sha1) && file.Size is null)
-                    unverifiable++;
-                continue;
-            }
+            if (outcome.Error is { } error)
+                ExceptionDispatchInfo.Capture(error).Throw();
 
-            var reason = status == MinecraftFileIntegrityStatus.Missing
-                ? GameFileRepairFailureReason.Missing
-                : GameFileRepairFailureReason.Corrupted;
-            if (reason == GameFileRepairFailureReason.Missing)
-                missing++;
-            else
-                corrupted++;
-            if (!string.Equals(file.RecoveryMethod, "Unavailable", StringComparison.Ordinal))
-                repairable++;
-            failures.Add(new GameFileRepairFailure(file.TargetPath, file.Category, reason, file.RecoveryMethod, file.Source));
+            missing += outcome.MissingCount;
+            corrupted += outcome.CorruptedCount;
+            unverifiable += outcome.UnverifiableCount;
+            repairable += outcome.RepairableCount;
+            fullVerificationCount += outcome.FullVerificationCount;
+            currentOperationVerificationReuseCount += outcome.CurrentOperationVerificationReuseCount;
+            if (outcome.Failure is not null)
+                failures.Add(outcome.Failure);
         }
+
         return new GameFileValidationReport(
             missing,
             corrupted,
@@ -954,6 +935,103 @@ internal static class GameFileManifestValidator
             fullVerificationCount,
             currentOperationVerificationReuseCount);
     }
+
+    private static async Task<FileValidationOutcome> ValidateFileAsync(
+        RequiredGameFile file,
+        MinecraftDownloadOperationContext? operationContext,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (!string.IsNullOrWhiteSpace(file.ManagedRoot))
+        {
+            MinecraftPathGuard.EnsureSafeFileDestination(
+                file.TargetPath,
+                file.ManagedRoot,
+                $"Required {file.Category} file");
+        }
+
+        if (file.ForcedFailureReason is { } forcedReason)
+        {
+            var missing = forcedReason == GameFileRepairFailureReason.Missing ? 1 : 0;
+            var corrupted = forcedReason is not (GameFileRepairFailureReason.Missing or GameFileRepairFailureReason.MetadataIncomplete) ? 1 : 0;
+            var unverifiable = forcedReason == GameFileRepairFailureReason.MetadataIncomplete ? 1 : 0;
+            var repairable = !string.Equals(file.RecoveryMethod, "Unavailable", StringComparison.Ordinal) ? 1 : 0;
+            return new FileValidationOutcome(
+                missing,
+                corrupted,
+                unverifiable,
+                repairable,
+                new GameFileRepairFailure(file.TargetPath, file.Category, forcedReason, file.RecoveryMethod, file.Reason),
+                0,
+                0);
+        }
+
+        using var verifiedLease = AcquireCurrentOperationVerificationLease(file, operationContext);
+        var verifiedByCurrentOperation = verifiedLease is not null;
+        var verification = verifiedByCurrentOperation
+            ? MinecraftFileVerification.SizeOnly
+            : file.Verification;
+        var fullVerificationCount = !verifiedByCurrentOperation && verification == MinecraftFileVerification.Full ? 1 : 0;
+        var currentOperationVerificationReuseCount = verifiedByCurrentOperation ? 1 : 0;
+        var status = await MinecraftFileIntegrity.EvaluateAsync(
+                file.TargetPath,
+                file.Sha1,
+                file.Size,
+                verification,
+                cancellationToken)
+            .ConfigureAwait(false);
+        if (status == MinecraftFileIntegrityStatus.Valid
+            && file.Sha256 is { Length: 64 } expectedSha256
+            && !await MatchesSha256Async(file.TargetPath, expectedSha256, cancellationToken).ConfigureAwait(false))
+        {
+            status = MinecraftFileIntegrityStatus.HashMismatch;
+        }
+        if (status == MinecraftFileIntegrityStatus.Valid
+            && file.Category.StartsWith("Loader", StringComparison.Ordinal)
+            && string.IsNullOrWhiteSpace(file.Sha1)
+            && IsArchivePath(file.TargetPath)
+            && !await IsReadableArchiveAsync(file.TargetPath, cancellationToken).ConfigureAwait(false))
+        {
+            status = MinecraftFileIntegrityStatus.HashMismatch;
+        }
+
+        if (status == MinecraftFileIntegrityStatus.Valid && IsOrdinaryFile(file.TargetPath))
+        {
+            var unverifiable = string.IsNullOrWhiteSpace(file.Sha1) && file.Size is null ? 1 : 0;
+            return new FileValidationOutcome(
+                0,
+                0,
+                unverifiable,
+                0,
+                null,
+                fullVerificationCount,
+                currentOperationVerificationReuseCount);
+        }
+
+        var reason = status == MinecraftFileIntegrityStatus.Missing
+            ? GameFileRepairFailureReason.Missing
+            : GameFileRepairFailureReason.Corrupted;
+        var isMissing = reason == GameFileRepairFailureReason.Missing;
+        var repairableFailure = !string.Equals(file.RecoveryMethod, "Unavailable", StringComparison.Ordinal) ? 1 : 0;
+        return new FileValidationOutcome(
+            isMissing ? 1 : 0,
+            isMissing ? 0 : 1,
+            0,
+            repairableFailure,
+            new GameFileRepairFailure(file.TargetPath, file.Category, reason, file.RecoveryMethod, file.Source),
+            fullVerificationCount,
+            currentOperationVerificationReuseCount);
+    }
+
+    private readonly record struct FileValidationOutcome(
+        int MissingCount,
+        int CorruptedCount,
+        int UnverifiableCount,
+        int RepairableCount,
+        GameFileRepairFailure? Failure,
+        int FullVerificationCount,
+        int CurrentOperationVerificationReuseCount,
+        Exception? Error = null);
 
     private static MinecraftVerifiedFileLease? AcquireCurrentOperationVerificationLease(
         RequiredGameFile file,

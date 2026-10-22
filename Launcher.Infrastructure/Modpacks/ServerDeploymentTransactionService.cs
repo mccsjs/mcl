@@ -14,7 +14,7 @@ namespace Launcher.Infrastructure.Modpacks;
 
 internal sealed class ServerDeploymentTransactionService : IServerDeploymentTransactionService
 {
-    internal const string MarkerFileNamePrefix = ".blockhelm-server-install-";
+    internal const string MarkerFileNamePrefix = ".mcl-server-install-";
 
     public Task<IServerDeploymentTransaction> BeginAsync(
         string parentDirectory,
@@ -39,7 +39,7 @@ internal sealed class ServerDeploymentTransactionService : IServerDeploymentTran
 
         var transactionId = Guid.NewGuid().ToString("N");
         var stagingDirectory = MinecraftPathGuard.EnsureWithin(
-            Path.Combine(parent, $".blockhelm-server-installing-{transactionId}"),
+            Path.Combine(parent, $".mcl-server-installing-{transactionId}"),
             parent,
             "Server deployment staging directory");
         Directory.CreateDirectory(stagingDirectory);

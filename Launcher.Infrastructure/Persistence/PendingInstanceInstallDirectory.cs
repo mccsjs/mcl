@@ -20,20 +20,44 @@ namespace Launcher.Infrastructure.Persistence;
 
 internal static class PendingInstanceInstallDirectory
 {
-    public const string Prefix = ".bhl-install-pending-";
+    public const string Prefix = ".mcl-install-pending-";
+    private const string LegacyPrefix = ".bhl-install-pending-";
     private const string TransactionDirectoryName = "transactions";
     private const string InstallDirectoryName = "install";
     private const string PreparationDirectoryName = "preparing";
-    public const string MarkerFileName = ".bhl-install-pending.json";
-    public const string PendingLockFileName = ".bhl-install-active.lock";
+    public const string MarkerFileName = ".mcl-install-pending.json";
+    private const string LegacyMarkerFileName = ".bhl-install-pending.json";
+    public const string PendingLockFileName = ".mcl-install-active.lock";
+    private const string LegacyPendingLockFileName = ".bhl-install-active.lock";
     private static readonly JsonSerializerOptions MarkerJsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public static bool IsPending(string path) =>
-        Path.GetFileName(path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
-            .StartsWith(Prefix, StringComparison.OrdinalIgnoreCase);
+    public static bool IsPending(string path)
+    {
+        var name = Path.GetFileName(path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+        return name.StartsWith(Prefix, StringComparison.OrdinalIgnoreCase)
+               || name.StartsWith(LegacyPrefix, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public static string GetMarkerPath(string directory)
+    {
+        var currentPath = Path.Combine(directory, MarkerFileName);
+        return File.Exists(currentPath) ? currentPath : Path.Combine(directory, LegacyMarkerFileName);
+    }
+
+    public static string GetPendingLockFilePath(string directory)
+    {
+        var currentPath = Path.Combine(directory, PendingLockFileName);
+        if (File.Exists(currentPath))
+            return currentPath;
+        var directoryName = Path.GetFileName(directory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+        return directoryName.StartsWith(LegacyPrefix, StringComparison.OrdinalIgnoreCase)
+               || File.Exists(Path.Combine(directory, LegacyMarkerFileName))
+            ? Path.Combine(directory, LegacyPendingLockFileName)
+            : currentPath;
+    }
 
     public static string GetPreparationRoot(string minecraftDirectory) =>
         Path.Combine(
@@ -106,8 +130,12 @@ internal static class PendingInstanceInstallDirectory
     {
         if (!TryReadStructurallyValidMarker(pendingDirectory, out marker, out _))
             return false;
-        var expectedName = $"{Prefix}{marker.LogicalVersionName}-{marker.TransactionId[..8].ToLowerInvariant()}";
-        return string.Equals(Path.GetFileName(pendingDirectory), expectedName, StringComparison.OrdinalIgnoreCase);
+        var directoryName = Path.GetFileName(pendingDirectory);
+        var prefix = directoryName.StartsWith(LegacyPrefix, StringComparison.OrdinalIgnoreCase)
+            ? LegacyPrefix
+            : Prefix;
+        var expectedName = $"{prefix}{marker.LogicalVersionName}-{marker.TransactionId[..8].ToLowerInvariant()}";
+        return string.Equals(directoryName, expectedName, StringComparison.OrdinalIgnoreCase);
     }
 
     public static bool TryReadValidCommittedMarker(
@@ -241,7 +269,7 @@ internal static class PendingInstanceInstallDirectory
         failureReason = string.Empty;
         try
         {
-            var markerPath = Path.Combine(directory, MarkerFileName);
+            var markerPath = GetMarkerPath(directory);
             if (!File.Exists(markerPath))
             {
                 failureReason = "transaction marker is missing";
