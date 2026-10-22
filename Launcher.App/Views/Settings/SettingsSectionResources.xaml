@@ -1,5 +1,5 @@
-<!--
-  BlockHelm Launcher
+﻿<!--
+  MCL Launcher
   Copyright (C) 2026 Quan Zhou
 
   This program is free software: you can redistribute it and/or modify
@@ -73,22 +73,6 @@
                    VerticalAlignment="Center" />
     </DataTemplate>
 
-    <DataTemplate x:Key="BackgroundEffectOptionTemplate"
-                  DataType="{x:Type settings:SettingsBackgroundEffectOption}">
-        <TextBlock Text="{Binding Title}"
-                   Foreground="{DynamicResource Brush.F4F4F4}"
-                   FontSize="13"
-                   VerticalAlignment="Center" />
-    </DataTemplate>
-
-    <DataTemplate x:Key="LanguageOptionTemplate"
-                  DataType="{x:Type settings:SettingsLanguageOption}">
-        <TextBlock Text="{Binding Title}"
-                   Foreground="{DynamicResource Brush.F4F4F4}"
-                   FontSize="13"
-                   VerticalAlignment="Center" />
-    </DataTemplate>
-
     <Style x:Key="AccentColorPreviewEllipseStyle" TargetType="Ellipse">
         <Setter Property="Width" Value="10" />
         <Setter Property="Height" Value="10" />
@@ -119,17 +103,6 @@
             </DataTrigger>
         </Style.Triggers>
     </Style>
-
-    <DataTemplate x:Key="AccentColorOptionTemplate"
-                  DataType="{x:Type settings:SettingsAccentColorOption}">
-        <StackPanel Orientation="Horizontal">
-            <Ellipse Style="{StaticResource AccentColorPreviewEllipseStyle}" />
-            <TextBlock Text="{Binding Title}"
-                       Foreground="{DynamicResource Brush.F4F4F4}"
-                       FontSize="13"
-                       VerticalAlignment="Center" />
-        </StackPanel>
-    </DataTemplate>
 
     <Style x:Key="SettingsChoiceListBoxStyle" TargetType="ListBox">
         <Setter Property="Margin" Value="0,10,0,0" />

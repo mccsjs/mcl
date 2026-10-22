@@ -1,5 +1,5 @@
-/*
- * BlockHelm Launcher
+﻿/*
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  * SPDX-License-Identifier: GPL-3.0-only
  */
@@ -16,10 +16,7 @@ public sealed class StringResourceTests
     private static readonly Regex PlaceholderPattern = new(@"\{\d+(?:[^}]*)\}", RegexOptions.CultureInvariant);
 
     [Theory]
-    [InlineData("Strings.en.resx")]
     [InlineData("Strings.zh-Hans.resx")]
-    [InlineData("Strings.zh-Hant.resx")]
-    [InlineData("Strings.ja-JP.resx")]
     public void LocalizedResourcesMatchDefaultContract(string fileName)
     {
         var defaults = Load("Strings.resx");

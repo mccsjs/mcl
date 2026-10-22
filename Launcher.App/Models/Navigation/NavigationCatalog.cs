@@ -1,5 +1,5 @@
 ﻿/*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -70,10 +70,10 @@ internal static class NavigationCatalog
             new NavigationItem { Page = AccountPage, Title = Strings.Page_Account, Icon = "\uE77B", IconKey = "main_menu_account" },
             new NavigationItem { Page = HomePage, Title = Strings.Page_Home, Icon = "\uE80F", IconKey = "main_menu_launch" },
             new NavigationItem { Page = MultiplayerPage, Title = Strings.Page_Multiplayer, Icon = "\uE701", IconKey = "main_menu_Multiplayer" },
-            new NavigationItem { Page = DownloadPage, Title = Strings.Page_Download, Icon = "\uE896", IconKey = "main_menu_instance_download" },
+            new NavigationItem { Page = DownloadPage, Title = Strings.NavigationBar_Download, Icon = "\uE896", IconKey = "main_menu_instance_download" },
             new NavigationItem { Page = GameSettingsPage, Title = Strings.Page_GameSettings, Icon = "\uE713", IconKey = "main_menu_instance_setting" },
-            new NavigationItem { Page = ResourcesPage, Title = Strings.Page_Resources, Icon = "\uE8F1", IconKey = "main_menu_library" },
-            new NavigationItem { Page = SettingsPage, Title = Strings.Page_Settings, Icon = "\uE713", IconKey = "main_menu_setting" }
+            new NavigationItem { Page = ResourcesPage, Title = Strings.NavigationBar_Resources, Icon = "\uE8F1", IconKey = "main_menu_library" },
+            new NavigationItem { Page = SettingsPage, Title = Strings.NavigationBar_Settings, Icon = "\uE713", IconKey = "main_menu_setting" }
         ];
     }
 

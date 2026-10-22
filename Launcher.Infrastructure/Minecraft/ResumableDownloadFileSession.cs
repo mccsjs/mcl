@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  * SPDX-License-Identifier: GPL-3.0-only
  */
@@ -780,7 +780,7 @@ internal sealed class ResumableDownloadFileSession : IAsyncDisposable
         if (OperatingSystem.IsWindows())
             normalizedPath = normalizedPath.ToUpperInvariant();
         var hash = Convert.ToHexString(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(normalizedPath)));
-        return $"Local\\BlockHelm.Download.Publish.{hash}";
+        return $"Local\\MCL.Download.Publish.{hash}";
     }
 
     private sealed class PublishMutexLease(Mutex mutex) : IDisposable

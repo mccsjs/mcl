@@ -1,5 +1,5 @@
 ﻿/*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -60,7 +60,7 @@ public partial class App : System.Windows.Application
             && LauncherUpdateRecoveryOptions.Parse(args) is null)
         {
             bootstrapPreferences = new JsonSettingsService().LoadLauncherBootstrapPreferences();
-            ApplyLauncherCulture(bootstrapPreferences.LauncherLanguage);
+            ApplyLauncherCulture();
         }
     }
 
@@ -126,7 +126,6 @@ public partial class App : System.Windows.Application
             services.AddSingleton<IClipboardService, ClipboardService>();
             services.AddSingleton<IFilePickerService, FilePickerService>();
             services.AddSingleton<IInstanceFolderService, InstanceFolderService>();
-            services.AddSingleton<ILauncherBackgroundImageLoader, LauncherBackgroundImageLoader>();
             services.AddSingleton<IExternalLinkService, ExternalLinkService>();
             services.AddSingleton<IApplicationExitService, ApplicationExitService>();
             services.AddSingleton<IMicrosoftLoginBrowserPageProvider, MicrosoftLoginBrowserPageProvider>();
@@ -144,7 +143,6 @@ public partial class App : System.Windows.Application
             services.AddSingleton<LauncherShutdownService>();
             services.AddSingleton<MainWindowPlacementService>();
             services.AddSingleton<LaunchStatusDialogViewModel>();
-            services.AddSingleton<UserAgreementDialogViewModel>();
             services.AddSingleton<MinecraftDirectoryStartupRecoveryDialogViewModel>();
             services.AddSingleton<TerracottaAgreementDialogViewModel>();
             services.AddSingleton<LauncherBackgroundViewModel>();
@@ -188,7 +186,7 @@ public partial class App : System.Windows.Application
                 .LoadWithMetadataAsync();
             var startupSettings = startupSettingsLoad.Settings;
             logLevelController.SetDiagnosticLoggingEnabled(startupSettings.EnableDiagnosticLogging);
-            ApplyLauncherCulture(startupSettings.LauncherLanguage);
+            ApplyLauncherCulture();
             Log.Debug("Launcher culture initialized. Language={Language}", CultureInfo.CurrentUICulture.Name);
             if (startupSettingsLoad.WasCreated)
                 startupSettings = await InitializeDefaultMinecraftDirectoryOnFirstRunAsync();
@@ -214,12 +212,7 @@ public partial class App : System.Windows.Application
             var themeService = serviceProvider.GetRequiredService<IThemeService>();
             themeService.ApplyPreference(
                 mainViewModel.Settings.Theme,
-                mainViewModel.Settings.ThemeFollowSystem,
-                mainViewModel.Settings.LauncherBackgroundOpacityPercent);
-            themeService.ApplyAccent(mainViewModel.Settings.AccentColor);
-            themeService.ApplyBackgroundEffect(
-                mainViewModel.Settings.LauncherBackgroundEffect,
-                mainViewModel.Settings.EnableImageBackgroundControlBlur);
+                mainViewModel.Settings.ThemeFollowSystem);
             var mainWindow = serviceProvider.GetRequiredService<MainWindow>();
             serviceProvider.GetRequiredService<MainWindowPlacementService>()
                 .Restore(mainWindow, mainViewModel.Settings);
@@ -539,10 +532,9 @@ public partial class App : System.Windows.Application
         }
     }
 
-    private static void ApplyLauncherCulture(string? language)
+    private static void ApplyLauncherCulture()
     {
-        var normalizedLanguage = LauncherLanguages.Normalize(language);
-        var culture = CultureInfo.GetCultureInfo(normalizedLanguage);
+        var culture = CultureInfo.GetCultureInfo(LauncherLanguages.SimplifiedChinese);
         CultureInfo.DefaultThreadCurrentCulture = culture;
         CultureInfo.DefaultThreadCurrentUICulture = culture;
         CultureInfo.CurrentCulture = culture;

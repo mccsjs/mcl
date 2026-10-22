@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -70,6 +70,7 @@ public static class Strings
     public static string Page_Account => Get(nameof(Page_Account));
     public static string Page_Home => Get(nameof(Page_Home));
     public static string Page_Download => Get(nameof(Page_Download));
+    public static string NavigationBar_Download => Get(nameof(NavigationBar_Download));
     public static string Page_Install => Get(nameof(Page_Install));
     public static string Page_GameSettings => Get(nameof(Page_GameSettings));
     public static string Page_Multiplayer => Get(nameof(Page_Multiplayer));
@@ -154,6 +155,7 @@ public static class Strings
     public static string Dialog_MultiplayerLanWorldDetectionTitle => Get(nameof(Dialog_MultiplayerLanWorldDetectionTitle));
     public static string Dialog_MultiplayerLanWorldDetectionMessage => Get(nameof(Dialog_MultiplayerLanWorldDetectionMessage));
     public static string Page_Resources => Get(nameof(Page_Resources));
+    public static string NavigationBar_Resources => Get(nameof(NavigationBar_Resources));
     public static string Resources_SectionMods => Get(nameof(Resources_SectionMods));
     public static string Resources_SectionResourcePacks => Get(nameof(Resources_SectionResourcePacks));
     public static string Resources_SectionShaderPacks => Get(nameof(Resources_SectionShaderPacks));
@@ -355,6 +357,7 @@ public static class Strings
     public static string Resources_ModRequiredDependenciesSkipButton => Get(nameof(Resources_ModRequiredDependenciesSkipButton));
     public static string Resources_ModRequiredDependenciesAutoInstallButton => Get(nameof(Resources_ModRequiredDependenciesAutoInstallButton));
     public static string Page_Settings => Get(nameof(Page_Settings));
+    public static string NavigationBar_Settings => Get(nameof(NavigationBar_Settings));
     public static string Settings_SectionGeneral => Get(nameof(Settings_SectionGeneral));
     public static string Settings_SectionDownload => Get(nameof(Settings_SectionDownload));
     public static string Settings_SectionLanguage => Get(nameof(Settings_SectionLanguage));

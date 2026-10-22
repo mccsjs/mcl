@@ -1,5 +1,5 @@
 ﻿<!--
-  BlockHelm Launcher
+  MCL Launcher
   Copyright (C) 2026 Quan Zhou
 
   This program is free software: you can redistribute it and/or modify
@@ -38,6 +38,7 @@
         x:Class="Launcher.App.Views.Shell.MainWindow"
         x:Name="RootWindow"
         Title="{x:Static res:Strings.App_Title}"
+        Icon="/Assets/Icons/launcher_icon.png"
         Width="1000"
         Height="700"
         AllowDrop="True"
@@ -114,12 +115,12 @@
 
                 <Border Grid.Row="0"
                         Grid.RowSpan="2"
-                        Background="{DynamicResource Brush.Page.Background}">
+                        Background="{DynamicResource Brush.FFFFFF}">
                     <Border.Style>
                         <Style TargetType="Border">
-                            <Setter Property="Opacity" Value="{DynamicResource Opacity.Page.Background}" />
+                            <Setter Property="Opacity" Value="1" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding LauncherBackground.IsActive}" Value="True">
+                                <DataTrigger Binding="{Binding DataContext.CurrentPage, ElementName=RootWindow}" Value="Home">
                                     <Setter Property="Opacity" Value="0" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -158,11 +159,12 @@
                 </Grid>
 
                 <Border Grid.Row="0"
-                        Margin="0,0,124,0"
+                        Margin="0,0,88,0"
                         Background="Transparent"
                         MouseLeftButtonDown="TitleBarDragArea_OnMouseLeftButtonDown" />
 
                 <StackPanel Grid.Row="0"
+                            Panel.ZIndex="2"
                             Orientation="Horizontal"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Top"
@@ -173,35 +175,6 @@
                         <TextBlock FontFamily="{DynamicResource LauncherIconFontFamily}"
                                    FontSize="10"
                                    Text="&#xE921;" />
-                    </Button>
-                    <Button x:Name="MaximizeRestoreButton"
-                            Margin="4,0,0,0"
-                            AutomationProperties.Name="{Binding ToolTip, RelativeSource={RelativeSource Self}}"
-                            Click="MaximizeRestoreButton_OnClick">
-                        <Button.Style>
-                            <Style TargetType="Button"
-                                   BasedOn="{StaticResource WindowCaptionButtonStyle}">
-                                <Setter Property="ToolTip" Value="{x:Static res:Strings.Window_MaximizeTooltip}" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding WindowState, ElementName=RootWindow}" Value="Maximized">
-                                        <Setter Property="ToolTip" Value="{x:Static res:Strings.Window_RestoreTooltip}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <TextBlock FontFamily="{DynamicResource LauncherIconFontFamily}"
-                                   FontSize="10">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Text" Value="&#xE922;" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding WindowState, ElementName=RootWindow}" Value="Maximized">
-                                            <Setter Property="Text" Value="&#xE923;" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
                     </Button>
                     <Button x:Name="CloseWindowButton"
                             Style="{StaticResource WindowCaptionButtonStyle}"
@@ -1530,48 +1503,6 @@
                 </Grid>
             </controls:DialogHost>
 
-            <controls:DialogHost Grid.ColumnSpan="2"
-                                 Grid.RowSpan="2"
-                                 DialogWidth="460"
-                                 UseIntegratedOverlay="True"
-                                 IsOpen="{Binding IsOpen}"
-                                 DataContext="{Binding UserAgreementDialog}">
-                <Grid Style="{StaticResource DialogContentGridStyle}">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <TextBlock Text="{x:Static res:Strings.Dialog_UserAgreementTitle}"
-                               Style="{StaticResource DialogTitleTextStyle}" />
-
-                    <StackPanel Grid.Row="1"
-                                Margin="0,16,0,24">
-                        <TextBlock Text="{x:Static res:Strings.Dialog_UserAgreementMessage}"
-                                   Style="{StaticResource DialogBodyTextStyle}"
-                                   TextWrapping="Wrap" />
-                        <TextBlock Margin="0,12,0,0"
-                                   Style="{StaticResource DialogBodyTextStyle}">
-                            <Hyperlink Command="{Binding OpenAgreementCommand}"
-                                       Foreground="{DynamicResource LauncherAccentBrush}">
-                                <Run Text="{x:Static res:Strings.Dialog_UserAgreementLink}" />
-                            </Hyperlink>
-                        </TextBlock>
-                    </StackPanel>
-
-                    <StackPanel Grid.Row="2"
-                                Style="{StaticResource DialogFooterStyle}">
-                        <Button Style="{StaticResource LauncherDialogButtonStyle}"
-                                Content="{x:Static res:Strings.Dialog_UserAgreementDisagreeButton}"
-                                Command="{Binding DisagreeAndExitCommand}" />
-                        <Button Style="{StaticResource LauncherPrimaryDialogButtonStyle}"
-                                Margin="{StaticResource DialogTrailingButtonMargin}"
-                                Content="{x:Static res:Strings.Dialog_UserAgreementAgreeButton}"
-                                Command="{Binding AgreeCommand}" />
-                    </StackPanel>
-                </Grid>
-            </controls:DialogHost>
 
             <controls:FloatingMessage Message="{Binding FloatingMessage}"
                                       IsOpen="{Binding IsFloatingMessageOpen}"

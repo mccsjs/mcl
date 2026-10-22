@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,9 +30,9 @@ namespace Launcher.Tests.Infrastructure;
 public sealed class LauncherHttpUserAgentTests
 {
     [Theory]
-    [InlineData("0.9.16", "BHL/0.9.16")]
-    [InlineData("1.2.3-beta.1+sha.abcdef", "BHL/1.2.3-beta.1+sha.abcdef")]
-    [InlineData(" 2.0.0-rc.1 ", "BHL/2.0.0-rc.1")]
+    [InlineData("0.9.16", "MCL/0.9.16")]
+    [InlineData("1.2.3-beta.1+sha.abcdef", "MCL/1.2.3-beta.1+sha.abcdef")]
+    [InlineData(" 2.0.0-rc.1 ", "MCL/2.0.0-rc.1")]
     public void BuildValue_UsesValidInformationalVersion(string version, string expected)
     {
         Assert.Equal(expected, LauncherHttpUserAgent.BuildValue(version, new Version(9, 9, 9, 9)));
@@ -42,21 +42,21 @@ public sealed class LauncherHttpUserAgentTests
     public void BuildValue_UsesAssemblyVersionWhenInformationalVersionIsInvalid()
     {
         Assert.Equal(
-            "BHL/2.3.4.5",
+            "MCL/2.3.4.5",
             LauncherHttpUserAgent.BuildValue("invalid version", new Version(2, 3, 4, 5)));
     }
 
     [Fact]
     public void BuildValue_UsesSafeFallbackWhenNoValidVersionExists()
     {
-        Assert.Equal("BHL/0.0.0", LauncherHttpUserAgent.BuildValue("invalid version", null));
+        Assert.Equal("MCL/0.0.0", LauncherHttpUserAgent.BuildValue("invalid version", null));
     }
 
     [Fact]
     public void AppAssembly_ProducesCurrentReleaseUserAgent()
     {
         Assert.Equal(
-            "BHL/0.9.16",
+            "MCL/0.9.16",
             LauncherHttpUserAgent.BuildValue(typeof(Launcher.App.ViewModels.Settings.SettingsPageViewModel).Assembly));
     }
 

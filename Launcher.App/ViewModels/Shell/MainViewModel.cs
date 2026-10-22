@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -106,7 +106,6 @@ public sealed partial class MainViewModel : ObservableObject
         IUiDispatcher uiDispatcher,
         IHomePageViewModelFactory homePageFactory,
         LaunchStatusDialogViewModel launchStatusDialog,
-        UserAgreementDialogViewModel userAgreementDialog,
         MinecraftDirectoryStartupRecoveryDialogViewModel minecraftDirectoryStartupRecoveryDialog,
         TerracottaAgreementDialogViewModel terracottaAgreementDialog,
         LauncherBackgroundViewModel launcherBackground,
@@ -126,7 +125,6 @@ public sealed partial class MainViewModel : ObservableObject
         SettingsPage = settingsPage;
         GameManagement = gameManagement;
         LaunchStatusDialog = launchStatusDialog;
-        UserAgreementDialog = userAgreementDialog;
         MinecraftDirectoryStartupRecoveryDialog = minecraftDirectoryStartupRecoveryDialog;
         TerracottaAgreementDialog = terracottaAgreementDialog;
         LauncherBackground = launcherBackground;
@@ -175,8 +173,6 @@ public sealed partial class MainViewModel : ObservableObject
 
     public LaunchStatusDialogViewModel LaunchStatusDialog { get; }
 
-    public UserAgreementDialogViewModel UserAgreementDialog { get; }
-
     public MinecraftDirectoryStartupRecoveryDialogViewModel MinecraftDirectoryStartupRecoveryDialog { get; }
 
     public TerracottaAgreementDialogViewModel TerracottaAgreementDialog { get; }
@@ -199,8 +195,7 @@ public sealed partial class MainViewModel : ObservableObject
 
         Settings = initialSettings ?? await settingsService.LoadAsync();
         MinecraftDirectoryStartupRecoveryDialog.Prime(minecraftDirectoryStartupRecovery);
-        LauncherBackground.ApplyEffect(Settings.LauncherBackgroundEffect, reportFailure: false);
-        UserAgreementDialog.Prime(Settings);
+        LauncherBackground.Activate();
         IsMenuExpanded = Settings.IsMenuExpanded;
         await AccountPage.PrimeAsync();
         await sessionCoordinator.PrimeAsync(Settings);
@@ -208,8 +203,6 @@ public sealed partial class MainViewModel : ObservableObject
         UpdateAccountNavigationAvatar();
         hasPrimedSettings = true;
     }
-
-    public Task<bool> WaitForUserAgreementDecisionAsync() => UserAgreementDialog.WaitForDecisionAsync();
 
     [RelayCommand]
     public async Task InitializeAsync()

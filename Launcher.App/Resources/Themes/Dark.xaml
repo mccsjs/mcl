@@ -1,5 +1,5 @@
 <!--
-  BlockHelm Launcher
+  MCL Launcher
   Copyright (C) 2026 Quan Zhou
 
   This program is free software: you can redistribute it and/or modify
@@ -28,11 +28,11 @@
     <SolidColorBrush x:Key="Brush.00282828" Color="{StaticResource Color.00282828}" />
     <Color x:Key="Color.01000000">#01000000</Color>
     <SolidColorBrush x:Key="Brush.01000000" Color="{StaticResource Color.01000000}" />
-    <Color x:Key="Color.036FC2">#1C7ECC</Color>
+    <Color x:Key="Color.036FC2">#C2410C</Color>
     <SolidColorBrush x:Key="Brush.036FC2" Color="{StaticResource Color.036FC2}" />
-    <Color x:Key="Color.047EDC">#1E8AE0</Color>
+    <Color x:Key="Color.047EDC">#EA580C</Color>
     <SolidColorBrush x:Key="Brush.047EDC" Color="{StaticResource Color.047EDC}" />
-    <Color x:Key="Color.0891FE">#2196F3</Color>
+    <Color x:Key="Color.0891FE">#F97316</Color>
     <SolidColorBrush x:Key="Brush.0891FE" Color="{StaticResource Color.0891FE}" />
     <Color x:Key="Color.10FFFFFF">#10FFFFFF</Color>
     <SolidColorBrush x:Key="Brush.10FFFFFF" Color="{StaticResource Color.10FFFFFF}" />
@@ -68,7 +68,7 @@
     <SolidColorBrush x:Key="Brush.26FFFFFF" Color="{StaticResource Color.26FFFFFF}" />
     <Color x:Key="Color.284E4E4E">#284E4E4E</Color>
     <SolidColorBrush x:Key="Brush.284E4E4E" Color="{StaticResource Color.284E4E4E}" />
-    <Color x:Key="Color.2A89D8FF">#2A89D8FF</Color>
+    <Color x:Key="Color.2A89D8FF">#2AF97316</Color>
     <SolidColorBrush x:Key="Brush.2A89D8FF" Color="{StaticResource Color.2A89D8FF}" />
     <Color x:Key="Color.2AFFFFFF">#2AFFFFFF</Color>
     <SolidColorBrush x:Key="Brush.2AFFFFFF" Color="{StaticResource Color.2AFFFFFF}" />
@@ -102,9 +102,9 @@
     <SolidColorBrush x:Key="Brush.5A5A5A" Color="{StaticResource Color.5A5A5A}" />
     <Color x:Key="Color.5CFFFFFF">#5CFFFFFF</Color>
     <SolidColorBrush x:Key="Brush.5CFFFFFF" Color="{StaticResource Color.5CFFFFFF}" />
-    <Color x:Key="Color.660891FE">#662196F3</Color>
+    <Color x:Key="Color.660891FE">#66F97316</Color>
     <SolidColorBrush x:Key="Brush.660891FE" Color="{StaticResource Color.660891FE}" />
-    <Color x:Key="Color.667ABEFF">#662196F3</Color>
+    <Color x:Key="Color.667ABEFF">#66F97316</Color>
     <SolidColorBrush x:Key="Brush.667ABEFF" Color="{StaticResource Color.667ABEFF}" />
     <Color x:Key="Color.66808080">#66808080</Color>
     <SolidColorBrush x:Key="Brush.66808080" Color="{StaticResource Color.66808080}" />
@@ -120,7 +120,7 @@
     <SolidColorBrush x:Key="Brush.80686868" Color="{StaticResource Color.80686868}" />
     <Color x:Key="Color.84FFFFFF">#84FFFFFF</Color>
     <SolidColorBrush x:Key="Brush.84FFFFFF" Color="{StaticResource Color.84FFFFFF}" />
-    <Color x:Key="Color.887ABEFF">#882196F3</Color>
+    <Color x:Key="Color.887ABEFF">#88F97316</Color>
     <SolidColorBrush x:Key="Brush.887ABEFF" Color="{StaticResource Color.887ABEFF}" />
     <Color x:Key="Color.8A252525">#8A252525</Color>
     <SolidColorBrush x:Key="Brush.8A252525" Color="{StaticResource Color.8A252525}" />
@@ -276,7 +276,7 @@
     <Color x:Key="Color.Input.TextBox.Background">#22FFFFFF</Color>
     <Color x:Key="Color.Input.TextBox.BackgroundFocused">#2AFFFFFF</Color>
     <Color x:Key="Color.Input.TextBox.Border">#00FFFFFF</Color>
-    <Color x:Key="Color.Input.TextBox.BorderFocused">#662196F3</Color>
+    <Color x:Key="Color.Input.TextBox.BorderFocused">#66F97316</Color>
     <Color x:Key="Color.Input.ComboBox.Background">#24FFFFFF</Color>
     <Color x:Key="Color.Input.ComboBox.Hover">#22FFFFFF</Color>
     <Color x:Key="Color.Input.ComboBox.Border">#20FFFFFF</Color>
@@ -288,7 +288,7 @@
     <Color x:Key="Color.List.Item.Background">#12FFFFFF</Color>
     <Color x:Key="Color.List.Item.Hover">#20FFFFFF</Color>
     <Color x:Key="Color.List.Item.Selected">#80686868</Color>
-    <Color x:Key="Color.List.Item.SelectedBorder">#882196F3</Color>
+    <Color x:Key="Color.List.Item.SelectedBorder">#88F97316</Color>
     <SolidColorBrush x:Key="Brush.Page.Background" Color="{StaticResource Color.Page.Background}" />
     <SolidColorBrush x:Key="Brush.Card.Surface" Color="{StaticResource Color.Card.Surface}" />
     <SolidColorBrush x:Key="Brush.Card.Border" Color="{StaticResource Color.Card.Border}" />
@@ -365,5 +365,5 @@
                       Direction="270"
                       Opacity="0.16"
                       ShadowDepth="0" />
-    <Color x:Key="Color.Accent.Primary">#2196F3</Color>
+    <Color x:Key="Color.Accent.Primary">#F97316</Color>
 </ResourceDictionary>

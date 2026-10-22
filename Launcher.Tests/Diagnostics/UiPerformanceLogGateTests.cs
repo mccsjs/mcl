@@ -1,5 +1,5 @@
 ﻿/*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  * SPDX-License-Identifier: GPL-3.0-only
  */
@@ -56,6 +56,19 @@ public sealed class UiPerformanceLogGateTests
     public void InstrumentationRequestParsesOnlyExplicitOptIn(string? value, bool expected)
     {
         Assert.Equal(expected, UiPerformanceLog.IsTruthy(value));
+    }
+
+    [Theory]
+    [InlineData("1", null, true)]
+    [InlineData(null, "yes", true)]
+    [InlineData("0", "1", false)]
+    [InlineData(null, "off", false)]
+    public void NewInstrumentationVariableTakesPrecedenceAndLegacyVariableRemainsSupported(
+        string? currentValue,
+        string? legacyValue,
+        bool expected)
+    {
+        Assert.Equal(expected, UiPerformanceLog.ResolveInstrumentationRequest(currentValue, legacyValue));
     }
 
     private static void WithDiagnosticLogging(bool enabled, Action assert)

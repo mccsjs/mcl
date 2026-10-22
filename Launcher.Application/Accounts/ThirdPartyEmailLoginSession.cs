@@ -1,4 +1,4 @@
-/* BlockHelm Launcher - SPDX-License-Identifier: GPL-3.0-only */
+/* MCL Launcher - SPDX-License-Identifier: GPL-3.0-only */
 namespace Launcher.Application.Accounts;
 
 public sealed record ThirdPartyEmailLoginSession(

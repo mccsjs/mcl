@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  * SPDX-License-Identifier: GPL-3.0-only
  */
@@ -18,7 +18,7 @@ public sealed class LauncherLogCleanupTests : TestTempDirectory
     public void ClearLogFilesRemovesLauncherAndUpdaterLogs()
     {
         var logDirectory = CreateLogDirectory();
-        WriteFile(logDirectory, "bhl-20260101-000000-000-p1.log");
+        WriteFile(logDirectory, "mcl-20260101-000000-000-p1.log");
         WriteFile(logDirectory, "bhl-20260102-000000-000-p2_001.log");
         WriteFile(logDirectory, "updater-20260101.log");
 
@@ -33,7 +33,7 @@ public sealed class LauncherLogCleanupTests : TestTempDirectory
     public void ClearLogFilesKeepsUnrelatedFiles()
     {
         var logDirectory = CreateLogDirectory();
-        WriteFile(logDirectory, "bhl-20260101-000000-000-p1.log");
+        WriteFile(logDirectory, "mcl-20260101-000000-000-p1.log");
         WriteFile(logDirectory, "launch-report.json");
         WriteFile(logDirectory, "notes.txt");
 
@@ -49,7 +49,7 @@ public sealed class LauncherLogCleanupTests : TestTempDirectory
     public void ClearLogFilesReportsTheLogFileHeldByTheRunningLauncher()
     {
         var logDirectory = CreateLogDirectory();
-        var activeLog = WriteFile(logDirectory, "bhl-20260103-000000-000-p3.log");
+        var activeLog = WriteFile(logDirectory, "mcl-20260103-000000-000-p3.log");
         WriteFile(logDirectory, "bhl-20260101-000000-000-p1.log");
         using var handle = new FileStream(activeLog, FileMode.Open, FileAccess.Write, FileShare.None);
 

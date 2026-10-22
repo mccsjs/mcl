@@ -1,5 +1,5 @@
-/*
- * BlockHelm Launcher
+﻿/*
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * SPDX-License-Identifier: GPL-3.0-only
@@ -46,28 +46,6 @@ public sealed class UserDeletionEntryPointTests : TestTempDirectory
             [modPath, resourcePackPath, shaderPackPath],
             deletion.Files);
         Assert.Equal([savePath], deletion.Directories);
-    }
-
-    [Fact]
-    public void ClearLauncherBackgroundImagesUsesUserFileDeletionService()
-    {
-        Directory.CreateDirectory(TempRoot);
-        var deletion = new RecordingUserFileDeletionService();
-        var catalog = new LauncherBackgroundImageCatalog(
-            new LauncherPathProvider(TempRoot, TempRoot),
-            deletion);
-        Directory.CreateDirectory(catalog.DirectoryPath);
-        var first = Path.Combine(catalog.DirectoryPath, "first.png");
-        var second = Path.Combine(catalog.DirectoryPath, "second.jpg");
-        var ignored = Path.Combine(catalog.DirectoryPath, "ignored.txt");
-        File.WriteAllText(first, string.Empty);
-        File.WriteAllText(second, string.Empty);
-        File.WriteAllText(ignored, string.Empty);
-
-        catalog.ClearImages();
-
-        Assert.Equal([first, second], deletion.Files);
-        Assert.True(File.Exists(ignored));
     }
 
     [Fact]

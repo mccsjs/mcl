@@ -1,5 +1,5 @@
-<!--
-  BlockHelm Launcher
+﻿<!--
+  MCL Launcher
   Copyright (C) 2026 Quan Zhou
 
   This program is free software: you can redistribute it and/or modify
@@ -26,15 +26,6 @@
              xmlns:views="clr-namespace:Launcher.App.Views.Multiplayer"
              Focusable="False">
     <UserControl.Resources>
-        <Style x:Key="MultiplayerProjectHyperlinkStyle" TargetType="Hyperlink">
-            <Setter Property="Foreground" Value="{DynamicResource Brush.Accent.Primary}" />
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Foreground" Value="{DynamicResource Brush.Accent.Hover}" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
         <!-- 胶囊槽：浅色底 + 全圆角 -->
         <Style x:Key="TransportPillTrackStyle" TargetType="Border">
             <Setter Property="Background" Value="{DynamicResource Brush.10FFFFFF}" />
@@ -117,7 +108,7 @@
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsTerracottaSection}" Value="True">
                                         <Setter Property="Background" Value="{DynamicResource Brush.Accent.Primary}" />
-                                        <Setter Property="Foreground" Value="{DynamicResource Brush.FFFFFF}" />
+                                        <Setter Property="Foreground" Value="{DynamicResource Brush.1F1F1F}" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -142,7 +133,7 @@
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsRedstoneSection}" Value="True">
                                         <Setter Property="Background" Value="{DynamicResource Brush.Accent.Primary}" />
-                                        <Setter Property="Foreground" Value="{DynamicResource Brush.FFFFFF}" />
+                                        <Setter Property="Foreground" Value="{DynamicResource Brush.1F1F1F}" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -276,30 +267,5 @@
             </Grid>
         </ScrollViewer>
 
-        <TextBlock x:Name="TerracottaAttribution"
-                   Grid.Row="1"
-                   Panel.ZIndex="1"
-                   Margin="36,0,36,50"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Bottom"
-                   Foreground="{DynamicResource LauncherTextSecondaryBrush}"
-                   FontSize="12"
-                   TextAlignment="Center">
-            <TextBlock.Style>
-                <Style TargetType="TextBlock">
-                    <Setter Property="Visibility" Value="Visible" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsLobbyStep}" Value="True">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding IsRedstoneSection}" Value="True">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </TextBlock.Style>
-            <Run Text="{x:Static res:Strings.Multiplayer_Create_TerracottaAttributionPrefix}" /><Hyperlink Command="{Binding OpenTerracottaProjectCommand}"
-                                                                                                            Style="{StaticResource MultiplayerProjectHyperlinkStyle}"><Run Text="{x:Static res:Strings.Multiplayer_Create_TerracottaAttributionLinkText}" /></Hyperlink><Run Text="{x:Static res:Strings.Multiplayer_Create_TerracottaAttributionSuffix}" />
-        </TextBlock>
     </Grid>
 </UserControl>

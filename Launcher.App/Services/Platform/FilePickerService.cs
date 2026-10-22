@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -153,7 +153,7 @@ public sealed class FilePickerService : IFilePickerService
         {
             Title = Strings.FilePicker_LaunchDiagnosticExportTitle,
             Filter = Strings.FilePicker_LaunchDiagnosticExportFilter,
-            FileName = $"BlockHelm-{safeInstanceName}-diagnostics-{DateTime.Now:yyyyMMdd-HHmmss}.zip",
+            FileName = $"mccsjs_launcher-{safeInstanceName}-diagnostics-{DateTime.Now:yyyyMMdd-HHmmss}.zip",
             AddExtension = true,
             DefaultExt = ".zip",
             OverwritePrompt = true

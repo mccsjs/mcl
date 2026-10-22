@@ -1,5 +1,5 @@
-/*
- * BlockHelm Launcher
+﻿/*
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  * SPDX-License-Identifier: GPL-3.0-only
  */
@@ -72,21 +72,17 @@ public sealed class MinecraftDirectoryStartupRecoveryContractTests
     }
 
     [Fact]
-    public void MainWindowWaitsForAgreementBeforeShowingPendingRecovery()
+    public void MainWindowInitializesBeforeShowingPendingRecovery()
     {
         var windowSource = ReadSource(
             "Launcher.App",
             "Views",
             "Shell",
             "MainWindow.xaml.cs");
-        var agreement = windowSource.IndexOf(
-            "await viewModel.WaitForUserAgreementDecisionAsync()",
-            StringComparison.Ordinal);
         var initialize = windowSource.IndexOf(
             "await viewModel.InitializeCommand.ExecuteAsync(null)",
             StringComparison.Ordinal);
-        Assert.True(agreement >= 0);
-        Assert.True(initialize > agreement);
+        Assert.True(initialize >= 0);
 
         var viewModelSource = ReadSource(
             "Launcher.App",

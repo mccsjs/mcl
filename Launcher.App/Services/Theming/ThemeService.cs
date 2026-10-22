@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,11 +27,8 @@ public sealed class ThemeService : IThemeService, IDisposable
     private readonly ThemeResourceLayerManager resourceLayerManager;
     private readonly ProgressiveBlurController progressiveBlurController;
     private string preferredTheme = LauncherDefaults.DefaultTheme;
-    private string preferredAccentColor = LauncherDefaults.DefaultAccentColor;
-    private string backgroundEffect = LauncherDefaults.DefaultLauncherBackgroundEffect;
+    private const string backgroundEffect = LauncherBackgroundEffects.Image;
     private bool followSystem = true;
-    private int backgroundOpacityPercent = LauncherDefaults.DefaultLauncherBackgroundOpacityPercent;
-    private bool enableImageControlBlur = LauncherDefaults.DefaultEnableImageBackgroundControlBlur;
     private bool hasAppliedTheme;
     private bool isDisposed;
 
@@ -69,14 +66,10 @@ public sealed class ThemeService : IThemeService, IDisposable
 
     public event EventHandler<BackgroundEffectChangedEventArgs>? BackgroundEffectChanged;
 
-    public void ApplyPreference(
-        string? theme,
-        bool followSystem,
-        int backgroundOpacityPercent)
+    public void ApplyPreference(string? theme, bool followSystem)
     {
         preferredTheme = NormalizeTheme(theme);
         this.followSystem = followSystem;
-        this.backgroundOpacityPercent = NormalizeBackgroundOpacity(backgroundOpacityPercent);
 
         var oldTheme = EffectiveTheme;
         var nextTheme = ResolveEffectiveTheme(preferredTheme, followSystem);
@@ -97,44 +90,6 @@ public sealed class ThemeService : IThemeService, IDisposable
             EffectiveThemeChanged?.Invoke(this, new EffectiveThemeChangedEventArgs(oldTheme, nextTheme));
     }
 
-    public void ApplyAccent(string? accentColor)
-    {
-        var normalizedAccentColor = LauncherAccentColors.Normalize(accentColor);
-        if (!string.IsNullOrWhiteSpace(accentColor)
-            && !string.Equals(accentColor, normalizedAccentColor, StringComparison.OrdinalIgnoreCase))
-        {
-            logger.LogWarning(
-                "Invalid launcher accent color preference encountered. AccentColor={AccentColor} FallingBackTo={FallbackAccentColor}",
-                accentColor,
-                normalizedAccentColor);
-        }
-
-        preferredAccentColor = normalizedAccentColor;
-        uiDispatcher.Invoke(ApplyAppearanceResourcesCore);
-    }
-
-    public void ApplyBackgroundOpacity(int opacityPercent)
-    {
-        backgroundOpacityPercent = NormalizeBackgroundOpacity(opacityPercent);
-        uiDispatcher.Invoke(ApplyPageBackgroundOpacityCore);
-    }
-
-    public void ApplyBackgroundEffect(string? backgroundEffect, bool enableImageControlBlur)
-    {
-        var oldEffect = this.backgroundEffect;
-        var nextEffect = LauncherBackgroundEffects.Normalize(backgroundEffect);
-        this.backgroundEffect = nextEffect;
-        this.enableImageControlBlur = enableImageControlBlur;
-        uiDispatcher.Invoke(ApplyAppearanceResourcesCore);
-
-        if (!string.Equals(oldEffect, nextEffect, StringComparison.Ordinal))
-        {
-            BackgroundEffectChanged?.Invoke(
-                this,
-                new BackgroundEffectChangedEventArgs(oldEffect, nextEffect));
-        }
-    }
-
     public void Dispose()
     {
         if (isDisposed)
@@ -153,39 +108,22 @@ public sealed class ThemeService : IThemeService, IDisposable
 
         var presentation = LauncherBackgroundPresentationPolicy.Resolve(
             backgroundEffect,
-            backgroundOpacityPercent,
-            enableImageControlBlur);
+            LauncherDefaults.DefaultLauncherBackgroundOpacityPercent,
+            enableImageControlBlur: true);
         resourceLayerManager.ApplyLayers(
             application.Resources,
             EffectiveTheme,
-            preferredAccentColor,
             presentation.IsImageBackgroundEnabled,
             presentation.IsImageControlBlurEnabled);
         ThemeResourceLayerManager.ApplyPageBackgroundOpacity(
             application.Resources,
             presentation.PageBackgroundOpacityPercent);
         logger.LogDebug(
-            "Launcher appearance resources applied. Theme={Theme} AccentColor={AccentColor} BackgroundEffect={BackgroundEffect} ImageLayerEnabled={ImageLayerEnabled} ImageControlBlurEnabled={ImageControlBlurEnabled}",
+            "Launcher appearance resources applied. Theme={Theme} BackgroundEffect={BackgroundEffect} ImageLayerEnabled={ImageLayerEnabled} ImageControlBlurEnabled={ImageControlBlurEnabled}",
             EffectiveTheme,
-            preferredAccentColor,
             presentation.Effect,
             presentation.IsImageBackgroundEnabled,
             presentation.IsImageControlBlurEnabled);
-    }
-
-    private void ApplyPageBackgroundOpacityCore()
-    {
-        var application = global::System.Windows.Application.Current;
-        if (application is null)
-            return;
-
-        var presentation = LauncherBackgroundPresentationPolicy.Resolve(
-            backgroundEffect,
-            backgroundOpacityPercent,
-            enableImageControlBlur);
-        ThemeResourceLayerManager.ApplyPageBackgroundOpacity(
-            application.Resources,
-            presentation.PageBackgroundOpacityPercent);
     }
 
     private EffectiveTheme ResolveEffectiveTheme(string theme, bool useSystemTheme)
@@ -223,8 +161,6 @@ public sealed class ThemeService : IThemeService, IDisposable
             : LauncherDefaults.DefaultTheme;
     }
 
-    private static int NormalizeBackgroundOpacity(int opacityPercent) => Math.Clamp(opacityPercent, 0, 100);
-
     private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
     {
         if (!followSystem)
@@ -237,9 +173,6 @@ public sealed class ThemeService : IThemeService, IDisposable
             return;
         }
 
-        uiDispatcher.Post(() => ApplyPreference(
-            preferredTheme,
-            followSystem,
-            backgroundOpacityPercent));
+        uiDispatcher.Post(() => ApplyPreference(preferredTheme, followSystem));
     }
 }

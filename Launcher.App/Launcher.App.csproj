@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\Launcher.Application\Launcher.Application.csproj" />
@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Resource Include="Assets\Icons\**\*.svg" />
+    <Resource Include="Assets\Backgrounds\**\*.jpg" />
     <Resource Include="Assets\Icons\**\*.png" />
     <Resource Include="Effects\Shaders\ProgressiveGaussianBlur.ps" />
     <EmbeddedResource Include="Resources\ReferenceProjects.json"
@@ -24,11 +25,11 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <AssemblyName>BlockHelm_Launcher_x64</AssemblyName>
+    <AssemblyName>mccsjs_launcher</AssemblyName>
     <RootNamespace>Launcher.App</RootNamespace>
-    <AssemblyTitle>BlockHelm Launcher</AssemblyTitle>
-    <Title>BlockHelm Launcher</Title>
-    <Product>BlockHelm Launcher</Product>
+    <AssemblyTitle>MCL Launcher</AssemblyTitle>
+    <Title>MCL Launcher</Title>
+    <Product>MCL Launcher</Product>
     <Version>0.9.16</Version>
     <LauncherBuildChannel>release</LauncherBuildChannel>
     <LauncherVersionCode>91699</LauncherVersionCode>
@@ -36,7 +37,7 @@
     <FileVersion>0.9.16.0</FileVersion>
     <InformationalVersion>0.9.16</InformationalVersion>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-    <ApplicationIcon>Assets\Icons\app_icon_concept.ico</ApplicationIcon>
+    <ApplicationIcon>Assets\Icons\launcher_icon.ico</ApplicationIcon>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>

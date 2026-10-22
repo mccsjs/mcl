@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,7 +23,6 @@ public enum SettingsPageSection
 {
     General,
     Download,
-    Language,
     LaunchMemory,
     Java,
     Theme,

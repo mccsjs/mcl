@@ -1,5 +1,5 @@
 ﻿/*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -45,7 +45,6 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddLauncherInfrastructure(this IServiceCollection services)
     {
         services.AddSingleton<LauncherPathProvider>();
-        services.AddSingleton<ILauncherBackgroundImageCatalog, LauncherBackgroundImageCatalog>();
         services.AddSingleton<IDownloadSpeedLimitState, DownloadSpeedLimitState>();
         services.AddSingleton<IImportConcurrencyLimiter>(_ => ImportConcurrencyLimiter.Shared);
         services.AddSingleton<IDownloadConcurrencyLimitState>(_ => ImportConcurrencyLimiter.Shared);

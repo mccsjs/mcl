@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,7 +33,6 @@ public partial class SettingsPageView : UserControl
     [
         nameof(SettingsPageSection.General),
         nameof(SettingsPageSection.Download),
-        nameof(SettingsPageSection.Language),
         nameof(SettingsPageSection.LaunchMemory),
         nameof(SettingsPageSection.Java),
         nameof(SettingsPageSection.Theme)

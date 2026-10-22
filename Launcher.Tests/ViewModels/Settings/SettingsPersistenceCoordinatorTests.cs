@@ -1,5 +1,5 @@
-/*
- * BlockHelm Launcher
+﻿/*
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -37,13 +37,11 @@ public sealed class SettingsPersistenceCoordinatorTests
         coordinator.Prime(settings);
 
         coordinator.Update(value => value.Theme = "Light");
-        coordinator.Update(value => value.AccentColor = "Purple");
 
         await service.SaveStarted.Task.WaitAsync(TimeSpan.FromSeconds(2));
 
         Assert.Equal(1, service.SaveCount);
         Assert.Equal("Light", settings.Theme);
-        Assert.Equal("Purple", settings.AccentColor);
     }
 
     [Fact]

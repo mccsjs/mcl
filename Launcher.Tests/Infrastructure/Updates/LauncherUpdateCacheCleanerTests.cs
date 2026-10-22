@@ -27,7 +27,7 @@ public sealed class LauncherUpdateCacheCleanerTests : IDisposable
     {
         var protectedUpdater = WriteCachedUpdater("1.0.1");
         var staleUpdater = WriteCachedUpdater("1.0.0");
-        var targetPath = Path.Combine(tempRoot, "BlockHelm-Launcher.exe");
+        var targetPath = Path.Combine(tempRoot, "mccsjs_launcher.exe");
         File.WriteAllText(targetPath, "old");
         var transaction = LauncherUpdateTransaction.Create(new LauncherUpdateApplyOptions(
             ProcessId: 0,
@@ -49,7 +49,7 @@ public sealed class LauncherUpdateCacheCleanerTests : IDisposable
     {
         var directory = Path.Combine(GetUpdatesRoot(), version);
         Directory.CreateDirectory(directory);
-        var path = Path.Combine(directory, "BlockHelm-Launcher.exe");
+        var path = Path.Combine(directory, "mccsjs_launcher.exe");
         File.WriteAllText(path, version);
         return path;
     }

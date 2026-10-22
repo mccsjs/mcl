@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -37,20 +37,19 @@ private async Task ApplyGameLanguageAsync(
         LauncherSettings settings,
         CancellationToken cancellationToken)
     {
-        if (!settings.AutoSetGameLanguageToLauncherLanguage || gameLanguageService is null)
+        if (gameLanguageService is null)
             return;
 
         try
         {
             var gameLanguage = await gameLanguageService.ApplyLauncherLanguageAsync(
                 instance,
-                settings.LauncherLanguage,
                 cancellationToken);
             logger.LogInformation(
                 "Game language synchronized with launcher language. InstanceId={InstanceId} MinecraftVersion={MinecraftVersion} LauncherLanguage={LauncherLanguage} GameLanguage={GameLanguage}",
                 instance.Id,
                 instance.MinecraftVersion,
-                LauncherLanguages.Normalize(settings.LauncherLanguage),
+                LauncherLanguages.SimplifiedChinese,
                 gameLanguage);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -64,7 +63,7 @@ private async Task ApplyGameLanguageAsync(
                 exception,
                 "Failed to synchronize game language before launch. InstanceId={InstanceId} LauncherLanguage={LauncherLanguage}",
                 instance.Id,
-                LauncherLanguages.Normalize(settings.LauncherLanguage));
+                LauncherLanguages.SimplifiedChinese);
         }
     }
 

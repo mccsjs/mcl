@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -129,8 +129,8 @@ public sealed class LauncherUpdateApplyRunnerTests : IDisposable
         UpdateProcessFault processFault = UpdateProcessFault.None)
     {
         Directory.CreateDirectory(tempRoot);
-        var sourcePath = Path.Combine(tempRoot, "BlockHelm_Launcher_x64.exe");
-        var targetPath = Path.Combine(tempRoot, "BlockHelm-Launcher.exe");
+        var sourcePath = Path.Combine(tempRoot, "mccsjs_launcher.exe");
+        var targetPath = Path.Combine(tempRoot, "mccsjs_launcher.exe");
         var logDirectory = Path.Combine(tempRoot, "log");
         File.WriteAllText(sourcePath, "new");
         File.WriteAllText(targetPath, "old");

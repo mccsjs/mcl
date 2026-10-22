@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  * SPDX-License-Identifier: GPL-3.0-only
  */
@@ -71,7 +71,7 @@ public sealed class TerracottaProvisioningServiceTests
         bool githubMetadataUnavailable = false,
         bool useBundledPackage = false)
     {
-        var root = Path.Combine(Path.GetTempPath(), $"bhl-terracotta-tests-{Guid.NewGuid():N}");
+        var root = Path.Combine(Path.GetTempPath(), $"mcl-terracotta-tests-{Guid.NewGuid():N}");
         Directory.CreateDirectory(root);
         var handler = new TerracottaHttpMessageHandler(
             version,

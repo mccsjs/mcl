@@ -1,5 +1,5 @@
 <!--
-  BlockHelm Launcher
+  MCL Launcher
   Copyright (C) 2026 Quan Zhou
 
   This program is free software: you can redistribute it and/or modify
@@ -30,4 +30,5 @@
     <Thickness x:Key="Thickness.Surface.WindowBorder">0</Thickness>
     <sys:Double x:Key="Opacity.LauncherBackground.Image.NonHomeDim">0.40</sys:Double>
     <sys:Boolean x:Key="Is.ImageBackground.ControlTint.Enabled">True</sys:Boolean>
+    <sys:Boolean x:Key="Is.ProgressiveBlur.Enabled">True</sys:Boolean>
 </ResourceDictionary>

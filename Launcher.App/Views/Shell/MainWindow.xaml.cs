@@ -1,5 +1,5 @@
 ﻿/*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -163,11 +163,6 @@ public partial class MainWindow : Window
             : WindowState.Maximized;
     }
 
-    private void MaximizeRestoreButton_OnClick(object sender, RoutedEventArgs e)
-    {
-        ToggleWindowMaximizedState();
-    }
-
     private void MainWindow_StateChanged(object? sender, EventArgs e)
     {
         UpdateWindowChromeCornerRadius();
@@ -296,9 +291,6 @@ public partial class MainWindow : Window
         // 先显示已 Prime 的界面，再等待完整初始化，避免启动期间窗口长时间空白。
         try
         {
-            if (!await viewModel.WaitForUserAgreementDecisionAsync())
-                return;
-
             await viewModel.InitializeCommand.ExecuteAsync(null);
             IsMenuExpanded = false;
             stateSyncService.Start(() => viewModel.Settings, viewModel.SyncExternalInstanceCatalogAsync);

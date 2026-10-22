@@ -1,5 +1,5 @@
 ﻿<!--
-  BlockHelm Launcher
+  MCL Launcher
   Copyright (C) 2026 Quan Zhou
 
   This program is free software: you can redistribute it and/or modify
@@ -23,13 +23,13 @@
              xmlns:controls="clr-namespace:Launcher.App.Controls"
              xmlns:res="clr-namespace:Launcher.App.Resources"
              Focusable="False">
-    <Grid Margin="0,48,24,0">
-        <Grid HorizontalAlignment="Center"
-              VerticalAlignment="Center"
-              Margin="0,-18,0,0">
+    <Grid Margin="0,24,24,16">
+        <Grid HorizontalAlignment="Right"
+              VerticalAlignment="Bottom"
+              Margin="0,0,144,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="92" />
+                <RowDefinition Height="72" />
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0"
@@ -228,7 +228,7 @@
             </StackPanel>
 
             <Grid Grid.Row="1"
-                  Margin="0,10,0,0"
+                  Margin="0,6,0,0"
                   HorizontalAlignment="Center"
                   VerticalAlignment="Top">
                 <Button Content="{x:Static res:Strings.Home_GameSettingsButton}"

@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,11 +23,8 @@ public static class LauncherDefaults
 {
     public const string DefaultOfflineUsername = "Player";
     public const string DefaultTheme = "Dark";
-    public const string DefaultAccentColor = LauncherAccentColors.Blue;
     public const string DefaultLauncherLanguage = LauncherLanguages.SimplifiedChinese;
-    public const string DefaultLauncherBackgroundEffect = LauncherBackgroundEffects.Acrylic;
     public const int DefaultLauncherBackgroundOpacityPercent = 85;
-    public const bool DefaultEnableImageBackgroundControlBlur = true;
     public const double DefaultMainWindowWidth = 1000d;
     public const double DefaultMainWindowHeight = 700d;
     public const double MinimumMainWindowWidth = 900d;

@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ namespace Launcher.App.Effects;
 internal static class ProgressiveGaussianBlurShader
 {
     internal const string PackUri =
-        "pack://application:,,,/BlockHelm_Launcher_x64;component/Effects/Shaders/ProgressiveGaussianBlur.ps";
+        "pack://application:,,,/mccsjs_launcher;component/Effects/Shaders/ProgressiveGaussianBlur.ps";
 
     private static readonly object SyncRoot = new();
     private static PixelShader? pixelShader;

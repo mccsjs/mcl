@@ -1,5 +1,5 @@
-/*
- * BlockHelm Launcher
+﻿/*
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -59,7 +59,6 @@ public sealed partial class SettingsPageViewModel : ObservableObject, IDisposabl
         ILogger<CustomFileDownloadViewModel>? customFileDownloadLogger = null,
         DownloadTasksPageViewModel? downloadTasksPage = null,
         ILauncherLogLevelController? logLevelController = null,
-        LauncherBackgroundViewModel? launcherBackground = null,
         SettingsPersistenceCoordinator? settingsPersistence = null)
     {
         var resolvedLogger = logger ?? NullLogger<SettingsPageViewModel>.Instance;
@@ -86,7 +85,6 @@ public sealed partial class SettingsPageViewModel : ObservableObject, IDisposabl
                 floatingMessageService,
                 resolvedDownloadTasksPage,
                 customFileDownloadLogger));
-        Language = new LanguageSettingsViewModel(persistence);
         LaunchMemory = new LaunchMemorySettingsViewModel(persistence, systemMemoryService);
         Java = new JavaSettingsViewModel(
             persistence,
@@ -97,8 +95,7 @@ public sealed partial class SettingsPageViewModel : ObservableObject, IDisposabl
             () => General.MinecraftDirectory);
         Theme = new ThemeSettingsViewModel(
             persistence,
-            themeService,
-            launcherBackground);
+            themeService);
         ControlList = new ControlListSettingsViewModel(persistence);
 
         Download.DownloadSourceChanged += (_, args) => DownloadSourceChanged?.Invoke(this, args);
@@ -113,7 +110,6 @@ public sealed partial class SettingsPageViewModel : ObservableObject, IDisposabl
         [
             new(SettingsPageSection.General, Strings.Settings_SectionGeneral, "instance_setting_page/general_setting"),
             new(SettingsPageSection.Download, Strings.Settings_SectionDownload, "setting_page/download"),
-            new(SettingsPageSection.Language, Strings.Settings_SectionLanguage, "setting_page/earth"),
             new(SettingsPageSection.LaunchMemory, Strings.Settings_SectionLaunchMemory, "instance_setting_page/launch"),
             new(SettingsPageSection.Java, Strings.Settings_SectionJava, "instance_setting_page/java"),
             new(SettingsPageSection.Theme, Strings.Settings_SectionTheme, "setting_page/theme")
@@ -125,7 +121,6 @@ public sealed partial class SettingsPageViewModel : ObservableObject, IDisposabl
     internal SettingsPersistenceCoordinator Persistence => persistence;
     public GeneralSettingsViewModel General { get; }
     public DownloadSettingsViewModel Download { get; }
-    public LanguageSettingsViewModel Language { get; }
     public LaunchMemorySettingsViewModel LaunchMemory { get; }
     public JavaSettingsViewModel Java { get; }
     public ThemeSettingsViewModel Theme { get; }
@@ -140,7 +135,6 @@ public sealed partial class SettingsPageViewModel : ObservableObject, IDisposabl
     public string SectionTitle => SelectedSection?.Title ?? Strings.Settings_SectionGeneral;
     public bool IsGeneralSection => SelectedSection?.Section is SettingsPageSection.General;
     public bool IsDownloadSection => SelectedSection?.Section is SettingsPageSection.Download;
-    public bool IsLanguageSection => SelectedSection?.Section is SettingsPageSection.Language;
     public bool IsLaunchMemorySection => SelectedSection?.Section is SettingsPageSection.LaunchMemory;
     public bool IsJavaSection => SelectedSection?.Section is SettingsPageSection.Java;
     public bool IsThemeSection => SelectedSection?.Section is SettingsPageSection.Theme;
@@ -150,7 +144,6 @@ public sealed partial class SettingsPageViewModel : ObservableObject, IDisposabl
         persistence.Prime(settings);
         General.Load(settings);
         Download.Load(settings);
-        Language.Load(settings);
         LaunchMemory.Load(settings);
         Java.Load(settings);
         Theme.Load(settings);
@@ -193,7 +186,6 @@ public sealed partial class SettingsPageViewModel : ObservableObject, IDisposabl
         OnPropertyChanged(nameof(SectionTitle));
         OnPropertyChanged(nameof(IsGeneralSection));
         OnPropertyChanged(nameof(IsDownloadSection));
-        OnPropertyChanged(nameof(IsLanguageSection));
         OnPropertyChanged(nameof(IsLaunchMemorySection));
         OnPropertyChanged(nameof(IsJavaSection));
         OnPropertyChanged(nameof(IsThemeSection));
@@ -201,7 +193,6 @@ public sealed partial class SettingsPageViewModel : ObservableObject, IDisposabl
         {
             SettingsPageSection.General => General,
             SettingsPageSection.Download => Download,
-            SettingsPageSection.Language => Language,
             SettingsPageSection.LaunchMemory => LaunchMemory,
             SettingsPageSection.Java => Java,
             SettingsPageSection.Theme => Theme,

@@ -1,5 +1,5 @@
-/*
- * BlockHelm Launcher
+﻿/*
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -98,12 +98,7 @@ public sealed class JsonSettingsService : ISettingsService
                 .GetResult();
             using var stream = File.OpenRead(settingsPath);
             using var document = JsonDocument.Parse(stream);
-            var language = document.RootElement.TryGetProperty(
-                       nameof(LauncherSettings.LauncherLanguage),
-                       out var languageProperty)
-                   && languageProperty.ValueKind is JsonValueKind.String
-                ? NormalizeLauncherLanguage(languageProperty.GetString())
-                : LauncherDefaults.DefaultLauncherLanguage;
+            var language = LauncherDefaults.DefaultLauncherLanguage;
             var enableDiagnosticLogging = document.RootElement.TryGetProperty(
                     nameof(LauncherSettings.EnableDiagnosticLogging),
                     out var diagnosticLoggingProperty)
@@ -355,33 +350,7 @@ public sealed class JsonSettingsService : ISettingsService
     private LauncherSettings Normalize(LauncherSettings settings)
     {
         settings.Theme = NormalizeTheme(settings.Theme);
-        settings.LauncherLanguage = NormalizeLauncherLanguage(settings.LauncherLanguage);
-        var normalizedAccentColor = LauncherAccentColors.Normalize(settings.AccentColor);
-        if (!string.IsNullOrWhiteSpace(settings.AccentColor)
-            && !string.Equals(settings.AccentColor, normalizedAccentColor, StringComparison.OrdinalIgnoreCase))
-        {
-            logger.LogWarning(
-                "Invalid launcher accent color preference encountered in settings. AccentColor={AccentColor} FallingBackTo={FallbackAccentColor}",
-                settings.AccentColor,
-                normalizedAccentColor);
-        }
 
-        settings.AccentColor = normalizedAccentColor;
-        var backgroundEffect = LauncherBackgroundEffects.Normalize(settings.LauncherBackgroundEffect);
-        if (!string.IsNullOrWhiteSpace(settings.LauncherBackgroundEffect)
-            && !string.Equals(settings.LauncherBackgroundEffect, backgroundEffect, StringComparison.OrdinalIgnoreCase))
-        {
-            logger.LogWarning(
-                "Invalid launcher background effect encountered in settings. BackgroundEffect={BackgroundEffect} FallingBackTo={FallbackBackgroundEffect}",
-                settings.LauncherBackgroundEffect,
-                backgroundEffect);
-        }
-
-        settings.LauncherBackgroundEffect = backgroundEffect;
-        settings.LauncherBackgroundOpacityPercent = Math.Clamp(
-            settings.LauncherBackgroundOpacityPercent,
-            0,
-            100);
         settings.MainWindowWidth = NormalizeWindowDimension(
             settings.MainWindowWidth,
             LauncherDefaults.DefaultMainWindowWidth,
@@ -535,8 +504,4 @@ public sealed class JsonSettingsService : ISettingsService
         return LauncherDefaults.DefaultTheme;
     }
 
-    private static string NormalizeLauncherLanguage(string? language)
-    {
-        return LauncherLanguages.Normalize(language);
-    }
 }

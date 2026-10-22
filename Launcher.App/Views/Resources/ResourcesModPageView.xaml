@@ -1,5 +1,5 @@
 <!--
-  BlockHelm Launcher
+  MCL Launcher
   Copyright (C) 2026 Quan Zhou
 
   This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/BlockHelm_Launcher_x64;component/Views/GameSettings/GameSettingsSectionResources.xaml" />
+                <ResourceDictionary Source="/mccsjs_launcher;component/Views/GameSettings/GameSettingsSectionResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <Style x:Key="ResourcesModDetailLabelTextStyle" TargetType="TextBlock">

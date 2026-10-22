@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,14 +29,5 @@ public interface IThemeService
 
     event EventHandler<BackgroundEffectChangedEventArgs>? BackgroundEffectChanged;
 
-    void ApplyPreference(
-        string? theme,
-        bool followSystem,
-        int backgroundOpacityPercent);
-
-    void ApplyAccent(string? accentColor);
-
-    void ApplyBackgroundOpacity(int opacityPercent);
-
-    void ApplyBackgroundEffect(string? backgroundEffect, bool enableImageControlBlur);
+    void ApplyPreference(string? theme, bool followSystem);
 }

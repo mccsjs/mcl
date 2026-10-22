@@ -1,5 +1,5 @@
 <!--
-  BlockHelm Launcher
+  MCL Launcher
   Copyright (C) 2026 Quan Zhou
 
   This program is free software: you can redistribute it and/or modify
@@ -27,6 +27,12 @@
              x:Name="Root"
              Focusable="False">
     <UserControl.Resources>
+        <Style x:Key="HomeLaunchMenuBackdropStyle"
+               TargetType="{x:Type controls:BackdropBlurBorder}"
+               BasedOn="{StaticResource SecondaryMenuBackdropStyle}">
+            <Setter Property="BlurRadius" Value="24" />
+        </Style>
+
         <!-- 渐变九宫格投影用的画笔。各档按高斯边缘衰减取样，颜色来自主题字典，
              保证深浅主题热切换时阴影与面板资源保持一致。 -->
         <LinearGradientBrush x:Key="HomeLaunchMenuShadowTopBrush" StartPoint="0,0" EndPoint="0,1">
@@ -233,21 +239,8 @@
                     <TranslateTransform x:Name="HomeLaunchMenuPanelTranslate" />
                 </Grid.RenderTransform>
 
-                <!-- 面板内部的均匀阴影。DropShadowEffect 在轮廓内部是一整片满值，面板底色只有 50%
-                     不透明度，这一片会透出来；九宫格只画外圈，因此必须补上，否则内部只有四角有阴影。
-                     阴影色来自主题资源，随面板平移并被裁剪，可见范围始终与面板一致。 -->
-                <Border Background="{DynamicResource Brush.SecondaryMenu.Shadow.Interior}"
-                        CornerRadius="14"
-                        IsHitTestVisible="False" />
-
-                <Border x:Name="HomeLaunchMenuShadowLayer"
-                        Background="{DynamicResource Brush.SecondaryMenu.Panel}"
-                        CornerRadius="14"
-                        Opacity="0.1"
-                        IsHitTestVisible="False" />
-
                 <controls:BackdropBlurBorder x:Name="HomeLaunchMenuPanel"
-                                             Style="{StaticResource SecondaryMenuBackdropStyle}">
+                                             Style="{StaticResource HomeLaunchMenuBackdropStyle}">
                     <Grid x:Name="HomeLaunchMenuViewport"
                           VerticalAlignment="Top"
                           ClipToBounds="True">

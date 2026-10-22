@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -113,7 +113,7 @@ public sealed class ModpackSandboxCleanupServiceTests
         {
             Path = System.IO.Path.Combine(
                 System.IO.Path.GetTempPath(),
-                "BlockHelm.Tests",
+                "MCL.Tests",
                 nameof(ModpackSandboxCleanupServiceTests),
                 Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(Path);

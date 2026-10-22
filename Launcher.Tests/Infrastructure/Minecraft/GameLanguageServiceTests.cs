@@ -1,5 +1,5 @@
-/*
- * BlockHelm Launcher
+﻿/*
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * SPDX-License-Identifier: GPL-3.0-only
@@ -29,17 +29,7 @@ public sealed class GameLanguageServiceTests : TestTempDirectory
     {
         Assert.Equal(
             expected,
-            GameLanguageService.ResolveMinecraftLanguage(LauncherLanguages.SimplifiedChinese, minecraftVersion));
-    }
-
-    [Theory]
-    [InlineData(LauncherLanguages.English, "en_US")]
-    [InlineData(LauncherLanguages.TraditionalChinese, "zh_TW")]
-    [InlineData(LauncherLanguages.Japanese, "ja_JP")]
-    [InlineData(LauncherLanguages.SimplifiedChinese, "zh_CN")]
-    public void EveryLanguageGetsTheLegacyCasingOnOldVersions(string launcherLanguage, string expected)
-    {
-        Assert.Equal(expected, GameLanguageService.ResolveMinecraftLanguage(launcherLanguage, "1.7.10"));
+            GameLanguageService.ResolveMinecraftLanguage(minecraftVersion));
     }
 
     // 自定义版本名基本来自现代整合包，解析不出来时按新版处理。
@@ -51,7 +41,7 @@ public sealed class GameLanguageServiceTests : TestTempDirectory
     {
         Assert.Equal(
             "zh_cn",
-            GameLanguageService.ResolveMinecraftLanguage(LauncherLanguages.SimplifiedChinese, minecraftVersion));
+            GameLanguageService.ResolveMinecraftLanguage(minecraftVersion));
     }
 
     [Fact]
@@ -63,7 +53,7 @@ public sealed class GameLanguageServiceTests : TestTempDirectory
         await File.WriteAllLinesAsync(optionsPath, ["version:1343", "lang:en_US", "fov:0.5"]);
 
         var applied = await new GameLanguageService()
-            .ApplyLauncherLanguageAsync(instance, LauncherLanguages.SimplifiedChinese);
+            .ApplyLauncherLanguageAsync(instance);
 
         Assert.Equal("zh_CN", applied);
         // 其余设置必须原样保留，语言同步不能顺手清掉玩家的游戏设置。
@@ -79,7 +69,7 @@ public sealed class GameLanguageServiceTests : TestTempDirectory
         await File.WriteAllLinesAsync(optionsPath, ["lang:zh_CN"]);
         var writtenAt = File.GetLastWriteTimeUtc(optionsPath);
 
-        await new GameLanguageService().ApplyLauncherLanguageAsync(instance, LauncherLanguages.SimplifiedChinese);
+        await new GameLanguageService().ApplyLauncherLanguageAsync(instance);
 
         Assert.Equal(writtenAt, File.GetLastWriteTimeUtc(optionsPath));
     }
@@ -92,7 +82,7 @@ public sealed class GameLanguageServiceTests : TestTempDirectory
         Directory.CreateDirectory(instance.InstanceDirectory);
         await File.WriteAllLinesAsync(optionsPath, ["fov:0.5"]);
 
-        await new GameLanguageService().ApplyLauncherLanguageAsync(instance, LauncherLanguages.SimplifiedChinese);
+        await new GameLanguageService().ApplyLauncherLanguageAsync(instance);
 
         Assert.Equal(["fov:0.5", "lang:zh_cn"], await File.ReadAllLinesAsync(optionsPath));
     }
@@ -105,7 +95,7 @@ public sealed class GameLanguageServiceTests : TestTempDirectory
         instance.VersionName = "1.7.10-forge-10.13.4.1614-1.7.10";
 
         var applied = await new GameLanguageService()
-            .ApplyLauncherLanguageAsync(instance, LauncherLanguages.SimplifiedChinese);
+            .ApplyLauncherLanguageAsync(instance);
 
         Assert.Equal("zh_CN", applied);
     }

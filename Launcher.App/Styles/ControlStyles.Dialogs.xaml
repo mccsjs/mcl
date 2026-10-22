@@ -1,5 +1,5 @@
 ﻿<!--
-  BlockHelm Launcher
+  MCL Launcher
   Copyright (C) 2026 Quan Zhou
 
   This program is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@
                     xmlns:converters="clr-namespace:Launcher.App.Converters"
                     xmlns:res="clr-namespace:Launcher.App.Resources">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/BlockHelm_Launcher_x64;component/Styles/ControlStyles.Scroll.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/mccsjs_launcher;component/Styles/ControlStyles.Scroll.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <Style x:Key="DialogOverlayStyle" TargetType="Grid">
@@ -401,7 +401,7 @@
     </Style>
 
     <Style x:Key="PrimaryDialogButtonStyle" TargetType="Button" BasedOn="{StaticResource DialogButtonStyle}">
-        <Setter Property="Foreground" Value="{DynamicResource Brush.FFFFFF}" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.1F1F1F}" />
         <Setter Property="Background" Value="{DynamicResource Brush.0891FE}" />
         <Setter Property="Template">
             <Setter.Value>

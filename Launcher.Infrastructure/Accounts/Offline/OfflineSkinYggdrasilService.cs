@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -327,9 +327,9 @@ internal sealed class OfflineSkinYggdrasilService : IOfflineSkinLaunchService, I
         {
             meta = new Dictionary<string, object>
             {
-                ["implementationName"] = "BlockHelm Offline Skin Service",
+                ["implementationName"] = "MCL Offline Skin Service",
                 ["implementationVersion"] = "1",
-                ["serverName"] = "BlockHelm Offline Skin Service",
+                ["serverName"] = "MCL Offline Skin Service",
                 ["feature.non_email_login"] = true
             },
             skinDomains = new[] { "127.0.0.1", "localhost" },

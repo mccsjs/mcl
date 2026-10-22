@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,8 +26,8 @@ namespace Launcher.App.Controls;
 
 internal static class IconSourceImageLoader
 {
-    private const string ComponentPathPrefix = "/BlockHelm_Launcher_x64;component/";
-    private const string ComponentUriPrefix = "pack://application:,,,/BlockHelm_Launcher_x64;component";
+    private const string ComponentPathPrefix = "/mccsjs_launcher;component/";
+    private const string ComponentUriPrefix = "pack://application:,,,/mccsjs_launcher;component";
 
     private static readonly ConcurrentDictionary<string, CachedImageSource> CachedImagesByKey = new(StringComparer.OrdinalIgnoreCase);
 

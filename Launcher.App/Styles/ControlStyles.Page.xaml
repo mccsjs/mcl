@@ -1,5 +1,5 @@
 ﻿<!--
-  BlockHelm Launcher
+  MCL Launcher
   Copyright (C) 2026 Quan Zhou
 
   This program is free software: you can redistribute it and/or modify
@@ -123,7 +123,7 @@
     <Style x:Key="HomeAccountNameTextStyle"
            TargetType="TextBlock"
            BasedOn="{StaticResource HomeForegroundNameShadowStyle}">
-        <Setter Property="Margin" Value="0,14,0,0" />
+        <Setter Property="Margin" Value="0,8,0,0" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="Foreground" Value="{DynamicResource Brush.Home.Name.Foreground}" />
         <Setter Property="FontSize" Value="18" />
@@ -136,7 +136,7 @@
     <Style x:Key="HomeVersionNameTextStyle"
            TargetType="TextBlock"
            BasedOn="{StaticResource HomeForegroundNameShadowStyle}">
-        <Setter Property="Margin" Value="0,12,0,0" />
+        <Setter Property="Margin" Value="0,7,0,0" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="Foreground" Value="{DynamicResource Brush.Home.Name.Foreground}" />
         <Setter Property="FontSize" Value="17" />
@@ -206,7 +206,7 @@
     <Style x:Key="HomeLaunchButtonStyle" TargetType="Button">
         <Setter Property="Width" Value="190" />
         <Setter Property="Height" Value="50" />
-        <Setter Property="Margin" Value="0,22,0,0" />
+        <Setter Property="Margin" Value="0,12,0,0" />
         <Setter Property="Foreground" Value="{DynamicResource Brush.FFFFFF}" />
         <Setter Property="Background" Value="{DynamicResource Brush.0891FE}" />
         <Setter Property="BorderThickness" Value="0" />

@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  * SPDX-License-Identifier: GPL-3.0-only
  */
@@ -14,25 +14,20 @@ internal sealed class ThemeResourceLayerManager
     internal const string PageBackgroundOpacityResourceKey = "Opacity.Page.Background";
 
     private const string DarkThemeSource =
-        "pack://application:,,,/BlockHelm_Launcher_x64;component/Resources/Themes/Dark.xaml";
+        "pack://application:,,,/mccsjs_launcher;component/Resources/Themes/Dark.xaml";
 
     private const string LightThemeSource =
-        "pack://application:,,,/BlockHelm_Launcher_x64;component/Resources/Themes/Light.xaml";
-
-    private const string AccentThemeSourcePrefix =
-        "pack://application:,,,/BlockHelm_Launcher_x64;component/Resources/Themes/Accents/";
+        "pack://application:,,,/mccsjs_launcher;component/Resources/Themes/Light.xaml";
 
     private const string ImageBackgroundSource =
-        "pack://application:,,,/BlockHelm_Launcher_x64;component/Resources/Themes/Backgrounds/Image.xaml";
+        "pack://application:,,,/mccsjs_launcher;component/Resources/Themes/Backgrounds/Image.xaml";
 
     private const string ImageBlurSource =
-        "pack://application:,,,/BlockHelm_Launcher_x64;component/Resources/Themes/Backgrounds/ImageBlur.xaml";
+        "pack://application:,,,/mccsjs_launcher;component/Resources/Themes/Backgrounds/ImageBlur.xaml";
 
     private readonly Func<string, ResourceDictionary> dictionaryFactory;
     private ResourceDictionary? themeLayer;
     private string? themeLayerSource;
-    private ResourceDictionary? accentLayer;
-    private string? accentLayerSource;
     private ResourceDictionary? imageLayer;
     private ResourceDictionary? imageBlurLayer;
 
@@ -49,7 +44,6 @@ internal sealed class ThemeResourceLayerManager
     public void ApplyLayers(
         ResourceDictionary applicationResources,
         EffectiveTheme theme,
-        string accentColor,
         bool imageBackgroundEnabled,
         bool imageControlBlurEnabled)
     {
@@ -57,17 +51,13 @@ internal sealed class ThemeResourceLayerManager
 
         var dictionaries = applicationResources.MergedDictionaries;
         RemoveLayer(dictionaries, themeLayer);
-        RemoveLayer(dictionaries, accentLayer);
         RemoveLayer(dictionaries, imageLayer);
         RemoveLayer(dictionaries, imageBlurLayer);
 
         var nextThemeSource = GetThemeSource(theme);
         themeLayer = GetOrCreateLayer(themeLayer, ref themeLayerSource, nextThemeSource);
 
-        var nextAccentSource = GetAccentThemeSource(accentColor);
-        accentLayer = GetOrCreateLayer(accentLayer, ref accentLayerSource, nextAccentSource);
         dictionaries.Add(themeLayer);
-        dictionaries.Add(accentLayer);
         if (imageBackgroundEnabled)
         {
             imageLayer ??= dictionaryFactory(ImageBackgroundSource);
@@ -90,9 +80,6 @@ internal sealed class ThemeResourceLayerManager
 
     internal static string GetThemeSource(EffectiveTheme theme) =>
         theme is EffectiveTheme.Light ? LightThemeSource : DarkThemeSource;
-
-    internal static string GetAccentThemeSource(string accentColor) =>
-        $"{AccentThemeSourcePrefix}{LauncherAccentColors.Normalize(accentColor)}.xaml";
 
     private ResourceDictionary GetOrCreateLayer(
         ResourceDictionary? currentLayer,

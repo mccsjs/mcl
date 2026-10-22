@@ -1,5 +1,5 @@
 ﻿/*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -42,19 +42,26 @@ internal static class UiPerformanceLog
     /// <summary>
     /// 界面性能埋点默认完全关闭，不随诊断日志开关一起输出：
     /// 它的采样字段是为性能调查准备的，混进常规诊断日志只会淹没真正有用的信息。
-    /// 需要排查卡顿时，把环境变量 <c>BHL_UI_PERF_DIAG</c> 设为 1（或 true/yes/on）
+    /// 需要排查卡顿时，把环境变量 <c>MCL_UI_PERF_DIAG</c> 设为 1（或 true/yes/on）；未设置时仍兼容旧变量。
     /// 并同时打开诊断日志开关，采样即恢复。
     /// </summary>
     internal static bool IsEnabled => IsInstrumentationRequested && Log.IsEnabled(LogEventLevel.Debug);
 
-    internal const string InstrumentationVariableName = "BHL_UI_PERF_DIAG";
+    internal const string InstrumentationVariableName = "MCL_UI_PERF_DIAG";
+    internal const string LegacyInstrumentationVariableName = "BHL_UI_PERF_DIAG";
 
     /// <summary>
     /// 环境变量只在进程启动时读一次：埋点判断位于每帧路径上，
     /// 不能承担反复查询环境变量的开销。
     /// </summary>
-    private static readonly bool IsInstrumentationRequested =
-        IsTruthy(Environment.GetEnvironmentVariable(InstrumentationVariableName));
+    private static readonly bool IsInstrumentationRequested = ResolveInstrumentationRequest(
+        Environment.GetEnvironmentVariable(InstrumentationVariableName),
+        Environment.GetEnvironmentVariable(LegacyInstrumentationVariableName));
+
+    internal static bool ResolveInstrumentationRequest(string? currentValue, string? legacyValue)
+    {
+        return currentValue is not null ? IsTruthy(currentValue) : IsTruthy(legacyValue);
+    }
 
     internal static bool IsTruthy(string? value)
     {

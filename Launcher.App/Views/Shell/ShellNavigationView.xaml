@@ -1,5 +1,5 @@
 ﻿<!--
-  BlockHelm Launcher
+  MCL Launcher
   Copyright (C) 2026 Quan Zhou
 
   This program is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate DataType="{x:Type models:NavigationItem}">
                             <Button Style="{StaticResource NavigationMenuButtonStyle}"
-                                    ToolTip="{Binding Page, Converter={StaticResource PageTitleConverter}}"
+                                    ToolTip="{Binding Title}"
                                     Command="{Binding DataContext.NavigateCommand, ElementName=Root}"
                                     CommandParameter="{Binding}">
                                 <Grid>
@@ -113,7 +113,8 @@
 
                 <Button DataContext="{Binding DownloadTasksNavigationItem}"
                         Style="{StaticResource NavigationMenuButtonStyle}"
-                        ToolTip="{Binding Page, Converter={StaticResource PageTitleConverter}}"
+                        Visibility="{Binding DataContext.DownloadTasksPage.HasRunningTasks, ElementName=Root, Converter={StaticResource BooleanToMenuTextVisibilityConverter}}"
+                        ToolTip="{Binding Title}"
                         Command="{Binding DataContext.NavigateCommand, ElementName=Root}"
                         CommandParameter="{Binding}">
                     <Grid>

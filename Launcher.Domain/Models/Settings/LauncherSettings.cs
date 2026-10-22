@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,18 +26,11 @@ public sealed class LauncherSettings
     public bool IsMenuExpanded { get; set; }
     public bool IsHomeLaunchMenuPinned { get; set; }
     public string Theme { get; set; } = LauncherDefaults.DefaultTheme;
-    public string AccentColor { get; set; } = LauncherDefaults.DefaultAccentColor;
-    public string LauncherLanguage { get; set; } = LauncherDefaults.DefaultLauncherLanguage;
     public bool EnableDiagnosticLogging { get; set; }
-    public bool HasAcceptedUserAgreement { get; set; }
     public double MainWindowWidth { get; set; } = LauncherDefaults.DefaultMainWindowWidth;
     public double MainWindowHeight { get; set; } = LauncherDefaults.DefaultMainWindowHeight;
     public bool MainWindowWasMaximized { get; set; }
-    public bool AutoSetGameLanguageToLauncherLanguage { get; set; } = true;
     public bool ThemeFollowSystem { get; set; } = true;
-    public string LauncherBackgroundEffect { get; set; } = LauncherDefaults.DefaultLauncherBackgroundEffect;
-    public int LauncherBackgroundOpacityPercent { get; set; } = LauncherDefaults.DefaultLauncherBackgroundOpacityPercent;
-    public bool EnableImageBackgroundControlBlur { get; set; } = LauncherDefaults.DefaultEnableImageBackgroundControlBlur;
     public LauncherUpdateChannel UpdateChannel { get; set; } = LauncherDefaults.DefaultUpdateChannel;
     public string DataDirectory { get; set; } = string.Empty;
     public string MinecraftDirectory { get; set; } = string.Empty;

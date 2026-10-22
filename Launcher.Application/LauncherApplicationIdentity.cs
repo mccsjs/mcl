@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,5 +21,6 @@ namespace Launcher.Application;
 
 public static class LauncherApplicationIdentity
 {
+    // This is an existing on-disk data path; keep it stable across the product rename.
     public const string StorageDirectoryName = "BHL";
 }

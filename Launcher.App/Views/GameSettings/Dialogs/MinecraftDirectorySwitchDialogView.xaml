@@ -1,5 +1,5 @@
 <!--
-  BlockHelm Launcher
+  MCL Launcher
   Copyright (C) 2026 Quan Zhou
 
   SPDX-License-Identifier: GPL-3.0-only
@@ -15,7 +15,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/BlockHelm_Launcher_x64;component/Views/Settings/SettingsSectionResources.xaml" />
+                <ResourceDictionary Source="/mccsjs_launcher;component/Views/Settings/SettingsSectionResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <Style x:Key="MinecraftDirectorySwitchItemStyle"

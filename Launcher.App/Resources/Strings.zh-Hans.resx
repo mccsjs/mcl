@@ -12,7 +12,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="App_Title" xml:space="preserve"><value>BlockHelm Launcher</value></data>
+  <data name="App_Title" xml:space="preserve"><value>MCL Launcher</value></data>
   <data name="MicrosoftLogin_BrowserCompletionHeading" xml:space="preserve"><value>身份验证已完成。</value></data>
   <data name="MicrosoftLogin_BrowserCompletionMessageFormat" xml:space="preserve"><value>你可以返回 {0}。请关闭此浏览器标签页。</value></data>
   <data name="Resources_ModRequiredDependenciesDialogTitle" xml:space="preserve"><value>缺少前置模组</value></data>
@@ -51,14 +51,16 @@
   <data name="Page_Account" xml:space="preserve"><value>账户</value></data>
   <data name="Page_Home" xml:space="preserve"><value>主页</value></data>
   <data name="Page_Download" xml:space="preserve"><value>游戏下载</value></data>
+  <data name="NavigationBar_Download" xml:space="preserve"><value>下载</value></data>
   <data name="Page_Install" xml:space="preserve"><value>下载</value></data>
   <data name="Page_GameSettings" xml:space="preserve"><value>游戏设置</value></data>
   <data name="Page_Resources" xml:space="preserve"><value>资源中心</value></data>
+  <data name="NavigationBar_Resources" xml:space="preserve"><value>资源</value></data>
   <data name="Page_Multiplayer" xml:space="preserve"><value>联机</value></data>
   <data name="Multiplayer_SectionCreateLobby" xml:space="preserve"><value>创建房间</value></data>
   <data name="Multiplayer_SectionJoinLobby" xml:space="preserve"><value>加入房间</value></data>
-  <data name="Multiplayer_TransportTerracotta" xml:space="preserve"><value>陶瓦</value></data>
-  <data name="Multiplayer_TransportRedstone" xml:space="preserve"><value>红石</value></data>
+  <data name="Multiplayer_TransportTerracotta" xml:space="preserve"><value>方式一</value></data>
+  <data name="Multiplayer_TransportRedstone" xml:space="preserve"><value>方式二</value></data>
   <data name="Redstone_SectionTitle" xml:space="preserve"><value>红石联机</value></data>
   <data name="Redstone_Intro" xml:space="preserve"><value>先将世界开放至局域网，再选择中转节点开启隧道。</value></data>
   <data name="Redstone_StepCreateLan" xml:space="preserve"><value>第一步：进入游戏世界，在菜单中点击“创建局域网世界”。</value></data>
@@ -285,6 +287,7 @@
   <data name="Resources_ModpackVersionsAllTitle" xml:space="preserve"><value>全部版本</value></data>
   <data name="Resources_ModpackDownloadFileExistsMessageFormat" xml:space="preserve"><value>下载位置已存在同名文件：{0}</value></data>
   <data name="Page_Settings" xml:space="preserve"><value>全局设置</value></data>
+  <data name="NavigationBar_Settings" xml:space="preserve"><value>设置</value></data>
   <data name="Settings_SectionGeneral" xml:space="preserve"><value>通用</value></data>
   <data name="Settings_SectionDownload" xml:space="preserve"><value>下载</value></data>
   <data name="Settings_SectionLanguage" xml:space="preserve"><value>语言</value></data>
@@ -1286,8 +1289,8 @@
   <data name="Status_MicrosoftReauthenticationSuccessful" xml:space="preserve"><value>正版账户重新登录成功，正在继续启动。</value></data>
   <data name="Status_MicrosoftReauthenticationAccountMismatch" xml:space="preserve"><value>登录的 Microsoft 账户与当前账户不一致。</value></data>
   <data name="Status_MicrosoftCredentialStorageFailed" xml:space="preserve"><value>无法安全保存正版账户登录信息。</value></data>
-  <data name="Status_MicrosoftLoginNotConfigured" xml:space="preserve"><value>此版本未配置 BlockHelm Launcher 的 Microsoft 应用身份，无法进行正版登录。</value></data>
-  <data name="Status_MicrosoftApplicationNotAuthorized" xml:space="preserve"><value>BlockHelm Launcher 尚未获得 Minecraft 登录服务授权，请稍后重试。</value></data>
+  <data name="Status_MicrosoftLoginNotConfigured" xml:space="preserve"><value>此版本未配置 MCL Launcher 的 Microsoft 应用身份，无法进行正版登录。</value></data>
+  <data name="Status_MicrosoftApplicationNotAuthorized" xml:space="preserve"><value>MCL Launcher 尚未获得 Minecraft 登录服务授权，请稍后重试。</value></data>
   <data name="Status_MicrosoftAuthenticationServerUnavailable" xml:space="preserve"><value>Microsoft 登录服务暂时不可用，请稍后重试。</value></data>
   <data name="Status_MicrosoftAuthenticationTimedOut" xml:space="preserve"><value>Microsoft 登录等待超时，请重试。</value></data>
   <data name="Status_MinecraftJavaOwnershipRequired" xml:space="preserve"><value>此 Microsoft 账户未拥有 Minecraft Java 版，无法添加为正版账户。</value></data>
@@ -1297,7 +1300,7 @@
   <data name="Dialog_ThirdPartyImportResultTitle" xml:space="preserve"><value>部分角色导入失败</value></data><data name="Dialog_ThirdPartyImportResultSubtitle" xml:space="preserve"><value>可以重试失败的角色，已成功导入的角色不会重复处理。</value></data>
   <data name="Dialog_ThirdPartyImportProgressFormat" xml:space="preserve"><value>已完成 {0}/{1}</value></data><data name="Dialog_ThirdPartyImportFailureFormat" xml:space="preserve"><value>{0} 个角色导入失败</value></data>
   <data name="Dialog_UserAgreementTitle" xml:space="preserve"><value>用户协议</value></data>
-  <data name="Dialog_UserAgreementMessage" xml:space="preserve"><value>欢迎使用 BlockHelm Launcher。使用本软件即表示您已阅读、理解并同意用户协议。请在继续前阅读协议内容。</value></data>
+  <data name="Dialog_UserAgreementMessage" xml:space="preserve"><value>欢迎使用 MCL Launcher。使用本软件即表示您已阅读、理解并同意用户协议。请在继续前阅读协议内容。</value></data>
   <data name="Dialog_UserAgreementLink" xml:space="preserve"><value>用户协议</value></data>
   <data name="Dialog_UserAgreementDisagreeButton" xml:space="preserve"><value>不同意并退出</value></data>
   <data name="Dialog_UserAgreementAgreeButton" xml:space="preserve"><value>同意</value></data>
@@ -1362,7 +1365,7 @@
   <data name="Status_ServerDistributionRestricted" xml:space="preserve"><value>作者限制了第三方下载，无法获取此服务端包。</value></data>
   <data name="Settings_LegalSection" xml:space="preserve"><value>版权及法律声明</value></data>
   <data name="Settings_CopyrightNotice" xml:space="preserve"><value>版权声明</value></data>
-  <data name="Settings_CopyrightNoticeDescription" xml:space="preserve"><value>Copyright © 2026 BlockHelm Launcher 开发者</value></data>
+  <data name="Settings_CopyrightNoticeDescription" xml:space="preserve"><value>Copyright © 2026 MCL Launcher 开发者</value></data>
   <data name="Settings_OpenSourceLicense" xml:space="preserve"><value>开源协议</value></data>
   <data name="Settings_OpenSourceLicenseDescription" xml:space="preserve"><value>本软件依据 GNU GPL v3（GPL-3.0-only）发布</value></data>
   <data name="Settings_UserAgreement" xml:space="preserve"><value>用户协议</value></data>

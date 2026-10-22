@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,14 +33,13 @@ public sealed class GameLanguageService : IGameLanguageService
 
     public async Task<string> ApplyLauncherLanguageAsync(
         GameInstance instance,
-        string launcherLanguage,
         CancellationToken cancellationToken = default)
     {
         var instanceDirectory = Path.GetFullPath(instance.InstanceDirectory);
         Directory.CreateDirectory(instanceDirectory);
 
         var optionsPath = Path.Combine(instanceDirectory, "options.txt");
-        var minecraftLanguage = ResolveMinecraftLanguage(launcherLanguage, ResolveGameVersion(instance));
+        var minecraftLanguage = ResolveMinecraftLanguage(ResolveGameVersion(instance));
         var languageLine = LanguageKeyPrefix + minecraftLanguage;
 
         if (!File.Exists(optionsPath))
@@ -77,16 +76,9 @@ public sealed class GameLanguageService : IGameLanguageService
     /// 1.11 以前的语言代码是 <c>zh_CN</c> 这种写法，且大小写敏感：写成 <c>zh_cn</c> 时游戏
     /// 找不到该语言，会回退到 <c>en_US</c> 并把 options.txt 一起改掉，于是每次启动都变回英文。
     /// </remarks>
-    internal static string ResolveMinecraftLanguage(string? launcherLanguage, string? minecraftVersion)
+    internal static string ResolveMinecraftLanguage(string? minecraftVersion)
     {
-        var languageCode = LauncherLanguages.Normalize(launcherLanguage) switch
-        {
-            LauncherLanguages.English => "en_us",
-            LauncherLanguages.TraditionalChinese => "zh_tw",
-            LauncherLanguages.Japanese => "ja_jp",
-            _ => "zh_cn"
-        };
-
+        const string languageCode = "zh_cn";
         return UsesLowercaseLanguageCodes(minecraftVersion)
             ? languageCode
             : ToLegacyLanguageCode(languageCode);

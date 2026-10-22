@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,10 +33,11 @@ internal static class LauncherLogConfiguration
     public const int MaxRetainedLauncherLogFiles = 20;
     public const long FileSizeLimitBytes = 20 * 1024 * 1024;
     public const bool RollOnFileSizeLimit = true;
-    public const string LogFileNamePrefix = "bhl-";
+    public const string LogFileNamePrefix = "mcl-";
 
     private const string LogDirectoryName = "log";
-    private static readonly string[] LogFileSearchPatterns = ["bhl*.log", "updater-*.log"];
+    private static readonly string[] LauncherLogSearchPatterns = ["mcl*.log", "bhl*.log"];
+    private static readonly string[] LogFileSearchPatterns = ["mcl*.log", "bhl*.log", "updater-*.log"];
 
     public static Serilog.ILogger CreateLogger(
         LoggingLevelSwitch levelSwitch,
@@ -100,8 +101,8 @@ internal static class LauncherLogConfiguration
                 DeleteIfExpired(path, cutoff);
         }
 
-        var launcherLogs = Directory
-            .EnumerateFiles(logDirectory, "bhl*.log", SearchOption.TopDirectoryOnly)
+        var launcherLogs = LauncherLogSearchPatterns
+            .SelectMany(pattern => Directory.EnumerateFiles(logDirectory, pattern, SearchOption.TopDirectoryOnly))
             .Select(path => new FileInfo(path))
             .OrderByDescending(file => file.LastWriteTimeUtc)
             .ThenByDescending(file => file.Name, StringComparer.OrdinalIgnoreCase)

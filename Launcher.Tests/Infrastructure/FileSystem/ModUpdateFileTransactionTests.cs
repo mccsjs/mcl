@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  * SPDX-License-Identifier: GPL-3.0-only
  */
@@ -240,7 +240,7 @@ public sealed class ModUpdateFileTransactionTests
     {
         public TemporaryDirectory()
         {
-            Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"BlockHelm.ModUpdate.Tests.{Guid.NewGuid():N}");
+            Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"MCL.ModUpdate.Tests.{Guid.NewGuid():N}");
             Directory.CreateDirectory(Path);
         }
 

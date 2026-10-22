@@ -1,5 +1,5 @@
 /*
- * BlockHelm Launcher
+ * MCL Launcher
  * Copyright (C) 2026 Quan Zhou
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ namespace Launcher.Infrastructure;
 
 internal static class LauncherHttpUserAgent
 {
-    private const string ProductName = "BHL";
+    private const string ProductName = "MCL";
     private const string FallbackVersion = "0.0.0";
     private static readonly string CurrentValue = BuildValue(Assembly.GetEntryAssembly());
 
