@@ -271,7 +271,7 @@ public sealed class InstanceBackupServiceTests
 
             Assert.Equal("restored-data", File.ReadAllText(Path.Combine(instance.InstanceDirectory, "restored.txt")));
             Assert.False(File.Exists(Path.Combine(instance.InstanceDirectory, "old.txt")));
-            Assert.False(File.Exists(Path.Combine(instance.InstanceDirectory, "BHL", ".launcher-restore-owner.json")));
+            Assert.False(File.Exists(Path.Combine(instance.InstanceDirectory, "MCL", ".launcher-restore-owner.json")));
             Assert.False(Directory.Exists(staging));
         }
         finally
@@ -390,7 +390,7 @@ public sealed class InstanceBackupServiceTests
             JsonSerializer.Serialize(new { id = instance.VersionName }));
         File.WriteAllText(Path.Combine(restoredDirectory, "restored.txt"), contents);
         File.WriteAllText(
-            Path.Combine(restoredDirectory, "BHL", ".launcher-restore-owner.json"),
+            Path.Combine(restoredDirectory, "MCL", ".launcher-restore-owner.json"),
             JsonSerializer.Serialize(new
             {
                 schemaVersion = 1,

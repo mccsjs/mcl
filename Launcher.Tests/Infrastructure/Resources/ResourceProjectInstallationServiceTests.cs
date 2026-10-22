@@ -113,7 +113,7 @@ public sealed class ResourceProjectInstallationServiceTests
 
             Assert.True(result.ModpackImportResult?.IsSuccess);
             Assert.Null(importedInstance.IconSource);
-            Assert.False(File.Exists(Path.Combine(instanceDirectory, "BHL", "resource-project-icon.png")));
+            Assert.False(File.Exists(Path.Combine(instanceDirectory, "MCL", "resource-project-icon.png")));
         }
         finally
         {

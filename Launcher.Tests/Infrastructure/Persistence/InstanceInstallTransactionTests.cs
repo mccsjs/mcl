@@ -30,7 +30,7 @@ public sealed class InstanceInstallTransactionTests : TestTempDirectory
         Assert.False(File.Exists(Path.Combine(versionsDirectory, ".bhl-install-transaction.lock")));
         Assert.False(File.Exists(Path.Combine(versionsDirectory, ".bhl-version-mutation.lock")));
         Assert.Equal(
-            Path.Combine(Path.GetFullPath(minecraftDirectory), "BHL", "locks", "versions", "install.lock"),
+            Path.Combine(Path.GetFullPath(minecraftDirectory), "MCL", "locks", "versions", "install.lock"),
             CrossProcessVersionLock.GetInstallCoordinationPath(minecraftDirectory));
         Directory.CreateDirectory(Path.Combine(transaction.PendingDirectory, "mods"));
         await File.WriteAllTextAsync(
@@ -50,7 +50,7 @@ public sealed class InstanceInstallTransactionTests : TestTempDirectory
         await transaction.CompleteLogicalCommitAsync();
         Assert.False(File.Exists(Path.Combine(transaction.FinalDirectory, ".bhl-install-pending.json")));
         using var settings = JsonDocument.Parse(await File.ReadAllTextAsync(
-            Path.Combine(transaction.FinalDirectory, "BHL", "instance-settings.json")));
+            Path.Combine(transaction.FinalDirectory, "MCL", "instance-settings.json")));
         Assert.Equal("Test", settings.RootElement.GetProperty("VersionName").GetString());
         Assert.Equal(transaction.FinalDirectory, settings.RootElement.GetProperty("InstanceDirectory").GetString());
     }
@@ -66,10 +66,10 @@ public sealed class InstanceInstallTransactionTests : TestTempDirectory
         var secondInstallPath = CrossProcessVersionLock.GetInstallCoordinationPath(secondMinecraftDirectory);
 
         Assert.Equal(
-            Path.Combine(Path.GetFullPath(firstMinecraftDirectory), "BHL", "locks", "versions", "install.lock"),
+            Path.Combine(Path.GetFullPath(firstMinecraftDirectory), "MCL", "locks", "versions", "install.lock"),
             firstInstallPath);
         Assert.Equal(
-            Path.Combine(Path.GetFullPath(firstMinecraftDirectory), "BHL", "locks", "versions", "mutation.lock"),
+            Path.Combine(Path.GetFullPath(firstMinecraftDirectory), "MCL", "locks", "versions", "mutation.lock"),
             firstMutationPath);
         Assert.NotEqual(firstInstallPath, secondInstallPath);
     }
@@ -79,7 +79,7 @@ public sealed class InstanceInstallTransactionTests : TestTempDirectory
     {
         var minecraftDirectory = Path.Combine(TempRoot, ".minecraft");
         Directory.CreateDirectory(minecraftDirectory);
-        await File.WriteAllTextAsync(Path.Combine(minecraftDirectory, "BHL"), "occupied");
+        await File.WriteAllTextAsync(Path.Combine(minecraftDirectory, "MCL"), "occupied");
         var service = new InstanceInstallTransactionService();
 
         await Assert.ThrowsAnyAsync<IOException>(() => service.BeginAsync(
@@ -406,7 +406,7 @@ public sealed class InstanceInstallTransactionTests : TestTempDirectory
         string settingsVersionName = "Test",
         string? settingsDirectory = null)
     {
-        Directory.CreateDirectory(Path.Combine(finalDirectory, "BHL"));
+        Directory.CreateDirectory(Path.Combine(finalDirectory, "MCL"));
         await File.WriteAllTextAsync(
             Path.Combine(finalDirectory, "Test.json"),
             JsonSerializer.Serialize(new { id = versionJsonId }));
@@ -423,7 +423,7 @@ public sealed class InstanceInstallTransactionTests : TestTempDirectory
                 createdAtUtc = DateTimeOffset.Parse("2026-07-13T00:00:00Z")
             }));
         await File.WriteAllTextAsync(
-            Path.Combine(finalDirectory, "BHL", "instance-settings.json"),
+            Path.Combine(finalDirectory, "MCL", "instance-settings.json"),
             JsonSerializer.Serialize(CreateInstance(
                 settingsInstanceId,
                 settingsVersionName,

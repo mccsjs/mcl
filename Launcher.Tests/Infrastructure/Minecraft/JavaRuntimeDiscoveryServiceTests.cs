@@ -46,7 +46,7 @@ public sealed class JavaRuntimeDiscoveryServiceTests : TestTempDirectory
             File.WriteAllText(executablePath, string.Empty);
         }
 
-        var catalogPath = Path.Combine(launcherDirectory, "BHL", "java-runtimes.json");
+        var catalogPath = Path.Combine(launcherDirectory, "MCL", "java-runtimes.json");
         Directory.CreateDirectory(Path.GetDirectoryName(catalogPath)!);
         File.WriteAllText(catalogPath, JsonSerializer.Serialize(new
         {
@@ -97,7 +97,7 @@ public sealed class JavaRuntimeDiscoveryServiceTests : TestTempDirectory
         var manualJava = Path.Combine(TempRoot, "manual", "bin", "java.exe");
         Directory.CreateDirectory(Path.GetDirectoryName(manualJava)!);
         File.WriteAllText(manualJava, string.Empty);
-        var catalogPath = Path.Combine(launcherDirectory, "BHL", "java-runtimes.json");
+        var catalogPath = Path.Combine(launcherDirectory, "MCL", "java-runtimes.json");
         Directory.CreateDirectory(Path.GetDirectoryName(catalogPath)!);
         File.WriteAllText(catalogPath, JsonSerializer.Serialize(new
         {
@@ -144,7 +144,7 @@ public sealed class JavaRuntimeDiscoveryServiceTests : TestTempDirectory
     public async Task RecordingAutomaticDiscoveryPreservesManualImports()
     {
         var launcherDirectory = Path.Combine(TempRoot, "launcher");
-        var catalogPath = Path.Combine(launcherDirectory, "BHL", "java-runtimes.json");
+        var catalogPath = Path.Combine(launcherDirectory, "MCL", "java-runtimes.json");
         Directory.CreateDirectory(Path.GetDirectoryName(catalogPath)!);
         File.WriteAllText(catalogPath, JsonSerializer.Serialize(new
         {

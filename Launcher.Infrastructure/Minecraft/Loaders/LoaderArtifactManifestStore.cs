@@ -8,6 +8,7 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text.Json;
+using Launcher.Application;
 using Launcher.Application.Services;
 using Launcher.Domain.Models;
 using Launcher.Infrastructure.Persistence;
@@ -79,7 +80,10 @@ internal static class LoaderArtifactManifestStore
     };
 
     public static string GetPath(string versionDirectory) =>
-        Path.Combine(Path.GetFullPath(versionDirectory), "BHL", FileName);
+        Path.Combine(
+            Path.GetFullPath(versionDirectory),
+            LauncherApplicationIdentity.StorageDirectoryName,
+            FileName);
 
     public static async Task WriteAsync(
         string versionDirectory,

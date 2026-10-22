@@ -21,6 +21,5 @@ namespace Launcher.Application;
 
 public static class LauncherApplicationIdentity
 {
-    // This is an existing on-disk data path; keep it stable across the product rename.
-    public const string StorageDirectoryName = "BHL";
+    public const string StorageDirectoryName = "MCL";
 }
